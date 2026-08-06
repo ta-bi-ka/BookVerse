@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Uploaded files
+backend/uploads/book-covers/*
+backend/uploads/profile-images/*
+!backend/uploads/book-covers/.gitkeep
+!backend/uploads/profile-images/.gitkeep
+
+# Logs
+*.log
+npm-debug.log*
+
+# Operating system and editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Test coverage
+coverage/

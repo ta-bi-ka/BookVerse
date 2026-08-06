@@ -1,0 +1,2 @@
+-- BookVerse indexes.sql
+-- Implementation will be added in the database phase.
