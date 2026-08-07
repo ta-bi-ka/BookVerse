@@ -1,7 +1,8 @@
-// BookVerse Express application configuration will be added in the backend foundation step.
 const express = require("express");
 const session = require("express-session");
 require("dotenv").config();
+
+const authRoutes = require("./routes/authRoutes");
 
 const app = express();
 
@@ -15,6 +16,8 @@ app.use(
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
+      sameSite: "lax",
+      secure: false,
       maxAge: 1000 * 60 * 60 * 24,
     },
   })
@@ -27,4 +30,15 @@ app.get("/api/health", (req, res) => {
   });
 });
 
+app.use("/api/auth", authRoutes);
+
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    message: "Route not found",
+  });
+});
+
 module.exports = app;
+
+
