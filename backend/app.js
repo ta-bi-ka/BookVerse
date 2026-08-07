@@ -1,8 +1,17 @@
+
+
 const express = require("express");
 const session = require("express-session");
+const genreRoutes = require("./routes/genreRoutes");
 require("dotenv").config();
 
 const authRoutes = require("./routes/authRoutes");
+const authorRoutes = require("./routes/authorRoutes");
+const publisherRoutes = require("./routes/publisherRoutes");
+const bookCopyRoutes = require("./routes/bookCopyRoutes");
+const bookRoutes = require("./routes/bookRoutes");
+const borrowRoutes = require("./routes/borrowRoutes");
+const reservationRoutes = require("./routes/reservationRoutes");
 
 const app = express();
 
@@ -31,7 +40,13 @@ app.get("/api/health", (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
-
+app.use("/api/authors", authorRoutes);
+app.use("/api/publishers", publisherRoutes);
+app.use("/api/genres", genreRoutes);
+app.use("/api/book-copies", bookCopyRoutes);
+app.use("/api/books", bookRoutes);
+app.use("/api/borrows", borrowRoutes);
+app.use("/api/reservations", reservationRoutes);
 app.use((req, res) => {
   res.status(404).json({
     success: false,
