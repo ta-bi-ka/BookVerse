@@ -13,10 +13,22 @@ const {
   requireRole,
 } = require("../middleware/authMiddleware");
 
+const {
+  validatePositiveIntegerParam,
+} = require("../middleware/validationMiddleware");
+
 const router = express.Router();
 
+const validateGenreId =
+  validatePositiveIntegerParam("id", "genre ID");
+
 router.get("/", getAllGenres);
-router.get("/:id", getGenreById);
+
+router.get(
+  "/:id",
+  validateGenreId,
+  getGenreById
+);
 
 router.post(
   "/",
@@ -29,6 +41,7 @@ router.put(
   "/:id",
   requireAuth,
   requireRole("Admin", "Librarian"),
+  validateGenreId,
   updateGenre
 );
 
@@ -36,6 +49,7 @@ router.delete(
   "/:id",
   requireAuth,
   requireRole("Admin", "Librarian"),
+  validateGenreId,
   deleteGenre
 );
 

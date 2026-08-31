@@ -13,11 +13,23 @@ const {
   requireRole,
 } = require("../middleware/authMiddleware");
 
+const {
+  validatePositiveIntegerParam,
+} = require("../middleware/validationMiddleware");
+
 const router = express.Router();
 
-// Public / logged-in browsing
+const validateAuthorId =
+  validatePositiveIntegerParam("id", "author ID");
+
+// Public browsing
 router.get("/", getAllAuthors);
-router.get("/:id", getAuthorById);
+
+router.get(
+  "/:id",
+  validateAuthorId,
+  getAuthorById
+);
 
 // Librarian and Admin management
 router.post(
@@ -31,6 +43,7 @@ router.put(
   "/:id",
   requireAuth,
   requireRole("Admin", "Librarian"),
+  validateAuthorId,
   updateAuthor
 );
 
@@ -38,6 +51,7 @@ router.delete(
   "/:id",
   requireAuth,
   requireRole("Admin", "Librarian"),
+  validateAuthorId,
   deleteAuthor
 );
 
