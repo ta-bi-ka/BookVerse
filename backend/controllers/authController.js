@@ -11,77 +11,72 @@ const register = async (req, res) => {
     const { fullName, username, email, password, phone } = req.body;
 
     if (
-  typeof fullName !== "string" ||
-  typeof username !== "string" ||
-  typeof email !== "string" ||
-  typeof password !== "string" ||
-  !fullName.trim() ||
-  !username.trim() ||
-  !email.trim() ||
-  !password.trim()
-) {
-  return res.status(400).json({
-    success: false,
-    message: "Full name, username, email and password are required",
-  });
-}
-
-if (password.length < 6 || password.length > 72) {
-  return res.status(400).json({
-    success: false,
-    message: "Password must contain between 6 and 72 characters",
-  });
-}
-
-if (
-  fullName.trim().length > 100 ||
-  username.trim().length > 50 ||
-  email.trim().length > 100
-) {
-  return res.status(400).json({
-    success: false,
-    message: "One or more registration fields are too long",
-  });
-}
-
-if (!/^[A-Za-z0-9_]+$/.test(username.trim())) {
-  return res.status(400).json({
-    success: false,
-    message: "Username may contain only letters, numbers and underscores",
-  });
-}
-
-if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
-  return res.status(400).json({
-    success: false,
-    message: "A valid email address is required",
-  });
-}
-
-if (
-  phone !== undefined &&
-  phone !== null &&
-  typeof phone !== "string"
-) {
-  return res.status(400).json({
-    success: false,
-    message: "Phone must be provided as text",
-  });
-}
-
-if (typeof phone === "string" && phone.trim().length > 20) {
-  return res.status(400).json({
-    success: false,
-    message: "Phone number is too long",
-  });
-}
-
-    if (password.length < 6) {
+      typeof fullName !== "string" ||
+      typeof username !== "string" ||
+      typeof email !== "string" ||
+      typeof password !== "string" ||
+      !fullName.trim() ||
+      !username.trim() ||
+      !email.trim() ||
+      !password.trim()
+    ) {
       return res.status(400).json({
         success: false,
-        message: "Password must be at least 6 characters",
+        message: "Full name, username, email and password are required",
       });
     }
+
+    if (password.length < 6 || password.length > 72) {
+      return res.status(400).json({
+        success: false,
+        message: "Password must contain between 6 and 72 characters",
+      });
+    }
+
+    if (
+      fullName.trim().length > 100 ||
+      username.trim().length > 50 ||
+      email.trim().length > 100
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "One or more registration fields are too long",
+      });
+    }
+
+    if (!/^[A-Za-z0-9_]+$/.test(username.trim())) {
+      return res.status(400).json({
+        success: false,
+        message: "Username may contain only letters, numbers and underscores",
+      });
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      return res.status(400).json({
+        success: false,
+        message: "A valid email address is required",
+      });
+    }
+
+    if (
+      phone !== undefined &&
+      phone !== null &&
+      typeof phone !== "string"
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Phone must be provided as text",
+      });
+    }
+
+    if (typeof phone === "string" && phone.trim().length > 20) {
+      return res.status(400).json({
+        success: false,
+        message: "Phone number is too long",
+      });
+    }
+
+
 
     const studentRole = await findStudentRole();
 
@@ -130,23 +125,23 @@ const login = async (req, res) => {
     const { identifier, password } = req.body;
 
     if (
-  typeof identifier !== "string" ||
-  typeof password !== "string" ||
-  !identifier.trim() ||
-  !password.trim()
-) {
-  return res.status(400).json({
-    success: false,
-    message: "Username/email and password are required",
-  });
-}
+      typeof identifier !== "string" ||
+      typeof password !== "string" ||
+      !identifier.trim() ||
+      !password.trim()
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Username/email and password are required",
+      });
+    }
 
-if (identifier.trim().length > 100 || password.length > 72) {
-  return res.status(400).json({
-    success: false,
-    message: "Login input is too long",
-  });
-}
+    if (identifier.trim().length > 100 || password.length > 72) {
+      return res.status(400).json({
+        success: false,
+        message: "Login input is too long",
+      });
+    }
 
     const user = await findUserByUsernameOrEmail(identifier.trim());
 

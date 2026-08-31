@@ -7,20 +7,20 @@ const createReservation = async (req, res) => {
 
     const normalizedBookId = Number(bookId);
 
-if (
-  !Number.isInteger(normalizedBookId) ||
-  normalizedBookId <= 0
-) {
-  return res.status(400).json({
-    success: false,
-    message: "A valid bookId is required",
-  });
-}
+    if (
+      !Number.isInteger(normalizedBookId) ||
+      normalizedBookId <= 0
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "A valid bookId is required",
+      });
+    }
 
     const reservation =
       await reservationService.createReservation(
         req.session.userId,
-       normalizedBookId
+        normalizedBookId
       );
 
     res.status(201).json({
@@ -84,17 +84,17 @@ const getAllReservations = async (req, res) => {
 const cancelReservation = async (req, res) => {
   try {
     const { id } = req.params;
-const reservationId = Number(id);
+    const reservationId = Number(id);
 
-if (
-  !Number.isInteger(reservationId) ||
-  reservationId <= 0
-) {
-  return res.status(400).json({
-    success: false,
-    message: "A valid reservation ID is required",
-  });
-}
+    if (
+      !Number.isInteger(reservationId) ||
+      reservationId <= 0
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "A valid reservation ID is required",
+      });
+    }
     const reservation =
       await reservationService.cancelReservation(
         reservationId,
@@ -123,15 +123,15 @@ const fulfillReservation = async (req, res) => {
     const { id } = req.params;
     const reservationId = Number(id);
 
-if (
-  !Number.isInteger(reservationId) ||
-  reservationId <= 0
-) {
-  return res.status(400).json({
-    success: false,
-    message: "A valid reservation ID is required",
-  });
-}
+    if (
+      !Number.isInteger(reservationId) ||
+      reservationId <= 0
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "A valid reservation ID is required",
+      });
+    }
 
     const reservation =
       await reservationService.fulfillReservation(reservationId);

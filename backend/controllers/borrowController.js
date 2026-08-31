@@ -7,15 +7,15 @@ const borrowBook = async (req, res) => {
 
     const normalizedBookId = Number(bookId);
 
-if (
-  !Number.isInteger(normalizedBookId) ||
-  normalizedBookId <= 0
-) {
-  return res.status(400).json({
-    success: false,
-    message: "A valid bookId is required",
-  });
-}
+    if (
+      !Number.isInteger(normalizedBookId) ||
+      normalizedBookId <= 0
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "A valid bookId is required",
+      });
+    }
 
     const borrow = await borrowService.borrowBook(
       req.session.userId,
@@ -47,17 +47,17 @@ if (
 const returnBook = async (req, res) => {
   try {
     const { id } = req.params;
-const borrowId = Number(id);
+    const borrowId = Number(id);
 
-if (
-  !Number.isInteger(borrowId) ||
-  borrowId <= 0
-) {
-  return res.status(400).json({
-    success: false,
-    message: "A valid borrow ID is required",
-  });
-}
+    if (
+      !Number.isInteger(borrowId) ||
+      borrowId <= 0
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "A valid borrow ID is required",
+      });
+    }
     const borrow = await borrowService.returnBook(
       borrowId,
       req.session.userId,
@@ -89,17 +89,17 @@ if (
 const renewBorrow = async (req, res) => {
   try {
     const { id } = req.params;
-const borrowId = Number(id);
+    const borrowId = Number(id);
 
-if (
-  !Number.isInteger(borrowId) ||
-  borrowId <= 0
-) {
-  return res.status(400).json({
-    success: false,
-    message: "A valid borrow ID is required",
-  });
-}
+    if (
+      !Number.isInteger(borrowId) ||
+      borrowId <= 0
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "A valid borrow ID is required",
+      });
+    }
     const borrow = await borrowService.renewBorrow(
       borrowId,
       req.session.userId,
