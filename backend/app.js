@@ -8,6 +8,7 @@ require("dotenv").config();
 const authRoutes = require("./routes/authRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const authorRoutes = require("./routes/authorRoutes");
+const reviewRoutes = require("./routes/reviewRoutes");
 const publisherRoutes = require("./routes/publisherRoutes");
 const bookCopyRoutes = require("./routes/bookCopyRoutes");
 const bookRoutes = require("./routes/bookRoutes");
@@ -43,6 +44,7 @@ app.get("/api/health", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/authors", authorRoutes);
+app.use("/api/reviews", reviewRoutes);
 app.use("/api/publishers", publisherRoutes);
 app.use("/api/genres", genreRoutes);
 app.use("/api/book-copies", bookCopyRoutes);
