@@ -7,6 +7,7 @@ require("dotenv").config();
 
 const authRoutes = require("./routes/authRoutes");
 const adminRoutes = require("./routes/adminRoutes");
+const profileRoutes = require("./routes/profileRoutes");
 const authorRoutes = require("./routes/authorRoutes");
 const fineRoutes = require("./routes/fineRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
@@ -48,6 +49,7 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/authors", authorRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/bookshelves", bookshelfRoutes);
+app.use("/api/profile", profileRoutes);
 app.use("/api/publishers", publisherRoutes);
 app.use("/api/genres", genreRoutes);
 app.use("/api/fines", fineRoutes);
