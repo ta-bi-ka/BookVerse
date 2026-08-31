@@ -1,79 +1,61 @@
--- BookVerse indexes.sql
--- Implementation will be added in the database phase.
--- BookVerse PostgreSQL Indexes
--- Run this file after schema.sql
+-- BookVerse performance indexes
+-- PostgreSQL automatically creates indexes for primary keys and UNIQUE fields.
 
-BEGIN;
+CREATE INDEX IF NOT EXISTS idx_users_role_id
+ON users (role_id);
 
--- Books: improve title search and publisher lookup
-CREATE INDEX idx_books_title
-    ON books (title);
+CREATE INDEX IF NOT EXISTS idx_books_publisher_id
+ON books (publisher_id);
 
-CREATE INDEX idx_books_publisher_id
-    ON books (publisher_id);
+CREATE INDEX IF NOT EXISTS idx_books_title
+ON books (title);
 
--- Junction tables: improve reverse lookups
-CREATE INDEX idx_book_authors_author_id
-    ON book_authors (author_id);
+CREATE INDEX IF NOT EXISTS idx_books_language
+ON books (language);
 
-CREATE INDEX idx_book_genres_genre_id
-    ON book_genres (genre_id);
+CREATE INDEX IF NOT EXISTS idx_books_publication_year
+ON books (publication_year);
 
--- Book copies: improve inventory lookup
-CREATE INDEX idx_book_copies_book_id
-    ON book_copies (book_id);
+CREATE INDEX IF NOT EXISTS idx_book_authors_author_book
+ON book_authors (author_id, book_id);
 
-CREATE INDEX idx_book_copies_status
-    ON book_copies (status);
+CREATE INDEX IF NOT EXISTS idx_book_genres_genre_book
+ON book_genres (genre_id, book_id);
 
--- Borrowing records
-CREATE INDEX idx_borrows_user_id
-    ON borrows (user_id);
+CREATE INDEX IF NOT EXISTS idx_book_copies_book_status
+ON book_copies (book_id, status);
 
-CREATE INDEX idx_borrows_copy_id
-    ON borrows (copy_id);
+CREATE INDEX IF NOT EXISTS idx_borrows_user_return
+ON borrows (user_id, return_date);
 
-CREATE INDEX idx_borrows_due_date
-    ON borrows (due_date);
+CREATE INDEX IF NOT EXISTS idx_borrows_copy_return
+ON borrows (copy_id, return_date);
 
-CREATE INDEX idx_borrows_return_date
-    ON borrows (return_date);
+CREATE INDEX IF NOT EXISTS idx_borrows_active_due_date
+ON borrows (due_date)
+WHERE return_date IS NULL;
 
--- Reservations
-CREATE INDEX idx_reservations_user_id
-    ON reservations (user_id);
+CREATE INDEX IF NOT EXISTS idx_reservations_user_status
+ON reservations (user_id, status);
 
-CREATE INDEX idx_reservations_book_id
-    ON reservations (book_id);
+CREATE INDEX IF NOT EXISTS idx_reservations_book_status
+ON reservations (book_id, status);
 
-CREATE INDEX idx_reservations_status
-    ON reservations (status);
+CREATE INDEX IF NOT EXISTS idx_reviews_book_id
+ON reviews (book_id);
 
-CREATE INDEX idx_reservations_queue
-    ON reservations (book_id, status, queue_position);
+CREATE INDEX IF NOT EXISTS idx_reviews_user_id
+ON reviews (user_id);
 
--- Reviews
-CREATE INDEX idx_reviews_book_id
-    ON reviews (book_id);
+CREATE INDEX IF NOT EXISTS idx_bookshelves_user_id
+ON bookshelves (user_id);
 
--- Bookshelves
-CREATE INDEX idx_bookshelves_user_id
-    ON bookshelves (user_id);
+CREATE INDEX IF NOT EXISTS idx_bookshelves_public
+ON bookshelves (created_on DESC)
+WHERE visibility = 'public';
 
-CREATE INDEX idx_bookshelf_items_book_id
-    ON bookshelf_items (book_id);
+CREATE INDEX IF NOT EXISTS idx_bookshelf_items_book_id
+ON bookshelf_items (book_id);
 
--- Logs
-CREATE INDEX idx_audit_logs_user_id
-    ON audit_logs (user_id);
-
-CREATE INDEX idx_audit_logs_action_time
-    ON audit_logs (action_time);
-
-CREATE INDEX idx_procedure_call_logs_user_id
-    ON procedure_call_logs (user_id);
-
-CREATE INDEX idx_procedure_call_logs_execution_time
-    ON procedure_call_logs (execution_time);
-
-COMMIT;
+CREATE INDEX IF NOT EXISTS idx_audit_logs_user_time
+ON audit_logs (user_id, action_time DESC);
