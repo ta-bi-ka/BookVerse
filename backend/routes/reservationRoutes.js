@@ -15,9 +15,19 @@ const {
 
 const router = express.Router();
 
-router.post("/", requireAuth, createReservation);
+router.post(
+  "/",
+  requireAuth,
+  requireRole("Student"),
+  createReservation
+);
 
-router.get("/my", requireAuth, getMyReservations);
+router.get(
+  "/my",
+  requireAuth,
+  requireRole("Student"),
+  getMyReservations
+);
 
 router.get(
   "/",

@@ -15,9 +15,19 @@ const {
 
 const router = express.Router();
 
-router.post("/", requireAuth, borrowBook);
+router.post(
+  "/",
+  requireAuth,
+  requireRole("Student"),
+  borrowBook
+);
 
-router.get("/my", requireAuth, getMyBorrows);
+router.get(
+  "/my",
+  requireAuth,
+  requireRole("Student"),
+  getMyBorrows
+);
 
 router.get(
   "/",
