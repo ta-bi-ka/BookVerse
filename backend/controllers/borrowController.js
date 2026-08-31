@@ -5,16 +5,21 @@ const borrowBook = async (req, res) => {
   try {
     const { bookId } = req.body;
 
-    if (!bookId) {
-      return res.status(400).json({
-        success: false,
-        message: "bookId is required",
-      });
-    }
+    const normalizedBookId = Number(bookId);
+
+if (
+  !Number.isInteger(normalizedBookId) ||
+  normalizedBookId <= 0
+) {
+  return res.status(400).json({
+    success: false,
+    message: "A valid bookId is required",
+  });
+}
 
     const borrow = await borrowService.borrowBook(
       req.session.userId,
-      bookId
+      normalizedBookId
     );
 
     res.status(201).json({
@@ -28,7 +33,7 @@ const borrowBook = async (req, res) => {
     if (error.code === "22P02") {
       return res.status(400).json({
         success: false,
-        message: "Invalid copyId",
+        message: "Invalid bookId",
       });
     }
 
@@ -42,9 +47,19 @@ const borrowBook = async (req, res) => {
 const returnBook = async (req, res) => {
   try {
     const { id } = req.params;
+const borrowId = Number(id);
 
+if (
+  !Number.isInteger(borrowId) ||
+  borrowId <= 0
+) {
+  return res.status(400).json({
+    success: false,
+    message: "A valid borrow ID is required",
+  });
+}
     const borrow = await borrowService.returnBook(
-      id,
+      borrowId,
       req.session.userId,
       req.session.roleName
     );
@@ -74,9 +89,19 @@ const returnBook = async (req, res) => {
 const renewBorrow = async (req, res) => {
   try {
     const { id } = req.params;
+const borrowId = Number(id);
 
+if (
+  !Number.isInteger(borrowId) ||
+  borrowId <= 0
+) {
+  return res.status(400).json({
+    success: false,
+    message: "A valid borrow ID is required",
+  });
+}
     const borrow = await borrowService.renewBorrow(
-      id,
+      borrowId,
       req.session.userId,
       req.session.roleName
     );

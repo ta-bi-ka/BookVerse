@@ -5,17 +5,22 @@ const createReservation = async (req, res) => {
   try {
     const { bookId } = req.body;
 
-    if (!bookId) {
-      return res.status(400).json({
-        success: false,
-        message: "bookId is required",
-      });
-    }
+    const normalizedBookId = Number(bookId);
+
+if (
+  !Number.isInteger(normalizedBookId) ||
+  normalizedBookId <= 0
+) {
+  return res.status(400).json({
+    success: false,
+    message: "A valid bookId is required",
+  });
+}
 
     const reservation =
       await reservationService.createReservation(
         req.session.userId,
-        bookId
+       normalizedBookId
       );
 
     res.status(201).json({
@@ -79,10 +84,20 @@ const getAllReservations = async (req, res) => {
 const cancelReservation = async (req, res) => {
   try {
     const { id } = req.params;
+const reservationId = Number(id);
 
+if (
+  !Number.isInteger(reservationId) ||
+  reservationId <= 0
+) {
+  return res.status(400).json({
+    success: false,
+    message: "A valid reservation ID is required",
+  });
+}
     const reservation =
       await reservationService.cancelReservation(
-        id,
+        reservationId,
         req.session.userId,
         req.session.roleName
       );
@@ -106,9 +121,20 @@ const cancelReservation = async (req, res) => {
 const fulfillReservation = async (req, res) => {
   try {
     const { id } = req.params;
+    const reservationId = Number(id);
+
+if (
+  !Number.isInteger(reservationId) ||
+  reservationId <= 0
+) {
+  return res.status(400).json({
+    success: false,
+    message: "A valid reservation ID is required",
+  });
+}
 
     const reservation =
-      await reservationService.fulfillReservation(id);
+      await reservationService.fulfillReservation(reservationId);
 
     res.status(200).json({
       success: true,
