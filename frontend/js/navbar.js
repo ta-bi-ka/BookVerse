@@ -1,9 +1,23 @@
 async function updateAuthNavigation() {
-  const loginLink = document.querySelector(
-    '.nav-links a[href="/pages/public/login.html"]'
+  const navigation = document.querySelector(".nav-links");
+
+  if (!navigation) return;
+
+  const profilePath = "/pages/user/account.html";
+  const loginPath = "/pages/public/login.html";
+
+  // Reuse an existing profile link when the page already has one.
+  let profileLink = navigation.querySelector(
+    `a[href="${profilePath}"]`
   );
 
-  if (!loginLink) return;
+  if (profileLink) {
+    profileLink.closest("li").hidden = true;
+  }
+
+  const registerItem = Array.from(
+    navigation.querySelectorAll("li")
+  ).find((item) => item.textContent.trim() === "Register");
 
   try {
     const response = await fetch("/api/auth/session", {
@@ -17,22 +31,47 @@ async function updateAuthNavigation() {
 
     if (!response.ok || result.success !== true) return;
 
+    const loginLink = navigation.querySelector(
+      `a[href="${loginPath}"]`
+    );
+
+    // Add My Profile if it is missing on this page.
+    if (!profileLink) {
+      const profileItem = document.createElement("li");
+
+      profileLink = document.createElement("a");
+      profileLink.href = profilePath;
+      profileLink.textContent = "My Profile";
+      profileItem.appendChild(profileLink);
+
+      const loginItem = loginLink?.closest("li");
+      navigation.insertBefore(profileItem, loginItem || null);
+    }
+
+    profileLink.closest("li").hidden = false;
+
+    if (window.location.pathname === profilePath) {
+      profileLink.setAttribute("aria-current", "page");
+    } else {
+      profileLink.removeAttribute("aria-current");
+    }
+
+    if (registerItem) {
+      registerItem.hidden = true;
+    }
+
+    if (!loginLink) return;
+
     const logoutButton = document.createElement("button");
     logoutButton.type = "button";
     logoutButton.className = "nav-logout";
     logoutButton.textContent = "Logout";
 
     loginLink.replaceWith(logoutButton);
-    // Hide Register for signed-in users.
-const registerItem = Array.from(
-  document.querySelectorAll(".nav-links li")
-).find((item) => item.textContent.trim() === "Register");
-
-if (registerItem) {
-  registerItem.hidden = true;
-}
 
     logoutButton.addEventListener("click", async () => {
+      if (logoutButton.disabled) return;
+
       logoutButton.disabled = true;
       logoutButton.textContent = "Logging out...";
 
@@ -42,7 +81,6 @@ if (registerItem) {
           credentials: "same-origin",
         });
 
-        // An expired session means the user is already signed out.
         if (logoutResponse.status !== 401) {
           const logoutResult = await logoutResponse.json();
 
@@ -51,7 +89,7 @@ if (registerItem) {
           }
         }
 
-        window.location.assign("/pages/public/login.html");
+        window.location.assign(loginPath);
       } catch (error) {
         logoutButton.disabled = false;
         logoutButton.textContent = "Logout";

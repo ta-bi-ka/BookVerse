@@ -89,3 +89,124 @@ async function loadBookDetails() {
 }
 
 loadBookDetails();
+const borrowButton = document.getElementById("borrow-button");
+const borrowStatus = document.getElementById("borrow-status");
+const borrowLogin = document.getElementById("borrow-login");
+
+const selectedBookId = Number(
+  new URLSearchParams(window.location.search).get("id")
+);
+
+let borrowing = false;
+
+async function prepareBorrowing() {
+  if (!Number.isSafeInteger(selectedBookId) || selectedBookId <= 0) {
+    borrowStatus.textContent =
+      "Select a valid book from Browse Books first.";
+    return;
+  }
+
+  try {
+    const response = await fetch("/api/auth/session", {
+      credentials: "same-origin",
+      cache: "no-store",
+    });
+
+    if (response.status === 401) {
+      borrowStatus.textContent = "Please log in to borrow this book.";
+      borrowLogin.hidden = false;
+      return;
+    }
+
+    const result = await response.json();
+
+    if (!response.ok || result.success !== true) {
+      throw new Error("Session check failed");
+    }
+
+    if (result.data?.roleName !== "Student") {
+      borrowStatus.textContent =
+        "Borrowing is available to Student accounts only.";
+      return;
+    }
+
+    borrowStatus.textContent =
+      "Click below to borrow. Availability will be checked when you submit.";
+    borrowButton.hidden = false;
+    borrowButton.disabled = false;
+  } catch (error) {
+    borrowStatus.textContent =
+      "Could not check your account. Please refresh the page.";
+  }
+}
+
+borrowButton.addEventListener("click", async () => {
+  if (borrowing || borrowButton.disabled) return;
+
+  borrowing = true;
+  borrowButton.disabled = true;
+  borrowButton.textContent = "Borrowing...";
+  borrowStatus.textContent = "";
+
+  let allowRetry = true;
+
+  try {
+    const response = await fetch("/api/borrows", {
+      method: "POST",
+      credentials: "same-origin",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ bookId: selectedBookId }),
+    });
+
+    const result = await response.json();
+
+    if (response.status === 401) {
+      borrowStatus.textContent =
+        "Your session has expired. Please log in again.";
+      borrowLogin.hidden = false;
+      borrowButton.hidden = true;
+      allowRetry = false;
+      return;
+    }
+
+    if (response.status === 403) {
+      borrowStatus.textContent =
+        "Your account is not permitted to borrow this book.";
+      allowRetry = false;
+      return;
+    }
+
+    if (!response.ok || result.success !== true) {
+      if (response.status >= 500) {
+        borrowStatus.textContent =
+          "Could not confirm borrowing. Check your borrowing history before trying again.";
+        allowRetry = false;
+      } else {
+        borrowStatus.textContent =
+          result.message || "This book could not be borrowed.";
+      }
+      return;
+    }
+
+    borrowStatus.textContent = "Book borrowed successfully.";
+    borrowButton.textContent = "Borrowed";
+    allowRetry = false;
+  } catch (error) {
+    borrowStatus.textContent =
+      "Could not confirm borrowing. Check your borrowing history before trying again.";
+    allowRetry = false;
+  } finally {
+    borrowing = false;
+
+    if (allowRetry) {
+      borrowButton.disabled = false;
+      borrowButton.textContent = "Borrow this book";
+    } else if (borrowButton.textContent === "Borrowing...") {
+      borrowButton.textContent = "Borrow unavailable";
+    }
+  }
+});
+
+prepareBorrowing();

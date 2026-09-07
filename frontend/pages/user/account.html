@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Profile — BookVerse</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <nav class="navbar" aria-label="Main navigation">
+      <a class="brand" href="/pages/public/index.html">BookVerse</a>
+
+      <ul class="nav-links">
+        <li>
+          <a href="/pages/public/index.html">Home</a>
+        </li>
+        <li>
+          <a href="/pages/public/books.html">Browse Books</a>
+        </li>
+        <li>
+          <a href="/pages/user/account.html" aria-current="page">
+            My Profile
+          </a>
+        </li>
+        <li>
+          <a href="/pages/public/login.html">Login</a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="page-container">
+    <section class="welcome-card" aria-labelledby="profile-title">
+      <p class="brand-label">Your library account</p>
+      <h1 id="profile-title">My profile</h1>
+      <p class="description">
+        View and manage your personal information.
+      </p>
+    </section>
+
+    <section class="catalogue" aria-labelledby="information-title">
+      <h2 id="information-title">Personal information</h2>
+
+      <div class="book-card">
+        <p id="profile-status" role="status">
+          Your profile information will appear here.
+        </p>
+        <div id="profile-details"></div>
+        <button
+  type="button"
+  id="edit-profile-toggle"
+  class="nav-logout"
+  aria-expanded="false"
+  aria-controls="edit-profile-section"
+  style="margin-top: 20px;"
+>
+  Edit profile
+</button>
+<a
+  href="/pages/user/borrows.html"
+  class="nav-logout"
+  style="display: inline-block; margin-top: 20px; text-decoration: none;"
+>
+  My borrowed books
+</a>
+      </div>
+    </section>
+    <section
+  id="edit-profile-section"
+  class="catalogue"
+  aria-labelledby="edit-profile-title"
+  hidden
+>
+
+  <div class="book-card">
+    <form id="profile-form" class="auth-form">
+      <div class="form-field">
+        <label for="profile-name">Full name</label>
+        <input
+          id="profile-name"
+          type="text"
+          autocomplete="name"
+          maxlength="100"
+          required
+        >
+      </div>
+
+      <div class="form-field">
+        <label for="profile-username">Username</label>
+        <input
+          id="profile-username"
+          type="text"
+          autocomplete="username"
+          maxlength="50"
+          pattern="[A-Za-z0-9_]+"
+          title="Use letters, numbers, and underscores only."
+          required
+        >
+      </div>
+
+      <div class="form-field">
+        <label for="profile-email">Email address</label>
+        <input
+          id="profile-email"
+          type="email"
+          autocomplete="email"
+          maxlength="100"
+          required
+        >
+      </div>
+
+      <div class="form-field">
+        <label for="profile-phone">Phone number (optional)</label>
+        <input
+          id="profile-phone"
+          type="tel"
+          autocomplete="tel"
+          maxlength="20"
+        >
+      </div>
+
+      <button
+        id="profile-save"
+        type="submit"
+        class="auth-button"
+        disabled
+      >
+        Save changes
+      </button>
+
+      <p id="profile-save-status" class="description" role="status"></p>
+    </form>
+  </div>
+</section>
+  </main>
+
+  <script src="/js/navbar.js"></script>
+  <script src="/js/profile.js"></script>
+</body>
+</html>

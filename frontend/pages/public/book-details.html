@@ -49,6 +49,29 @@
         <div id="book-details"></div>
       </div>
     </section>
+   <section class="catalogue" aria-labelledby="borrow-title">
+  <h2 id="borrow-title">Borrow this book</h2>
+
+  <div class="book-card">
+    <p id="borrow-status" role="status">
+      Checking your login status...
+    </p>
+
+    <button
+      type="button"
+      id="borrow-button"
+      class="auth-button"
+      hidden
+      disabled
+    >
+      Borrow this book
+    </button>
+
+    <a id="borrow-login" href="/pages/public/login.html" hidden>
+      Log in to borrow
+    </a>
+  </div>
+</section>
   </main>
 </body>
 <script src="/js/bookDetails.js"></script>

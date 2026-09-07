@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Borrows — BookVerse</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <nav class="navbar" aria-label="Main navigation">
+      <a class="brand" href="/pages/public/index.html">BookVerse</a>
+
+      <ul class="nav-links">
+        <li>
+          <a href="/pages/public/index.html">Home</a>
+        </li>
+        <li>
+          <a href="/pages/public/books.html">Browse Books</a>
+        </li>
+        <li>
+          <a href="/pages/user/borrows.html" aria-current="page">
+            My Borrows
+          </a>
+        </li>
+        <li>
+          <a href="/pages/public/login.html">Login</a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="page-container">
+    <section class="welcome-card" aria-labelledby="borrows-title">
+      <p class="brand-label">Your library activity</p>
+      <h1 id="borrows-title">My borrows</h1>
+      <p class="description">
+        Keep track of your borrowed books and their due dates.
+      </p>
+    </section>
+
+    <section class="catalogue" aria-labelledby="history-title">
+      <h2 id="history-title">Borrowing history</h2>
+
+      <div class="book-card">
+        <p id="borrows-status" role="status">
+          Loading your borrowing history...
+        </p>
+        <div id="borrows-list"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="/js/navbar.js"></script>
+  <script src="/js/borrows.js"></script>
+</body>
+</html>
