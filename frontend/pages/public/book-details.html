@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Details — BookVerse</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <nav class="navbar" aria-label="Main navigation">
+      <a class="brand" href="/pages/public/index.html">BookVerse</a>
+
+      <ul class="nav-links">
+        <li>
+          <a href="/pages/public/index.html">Home</a>
+        </li>
+        <li>
+          <a href="/pages/public/books.html">Browse Books</a>
+        </li>
+        <li>
+          <a href="/pages/public/login.html">Login</a>
+        </li>
+        <li>
+          <a href="/pages/public/register.html">Register</a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="page-container">
+    <p>
+      <a href="/pages/public/books.html">← Back to Browse Books</a>
+    </p>
+
+    <section class="welcome-card" aria-labelledby="details-title">
+      <p class="brand-label">Library catalogue</p>
+      <h1 id="details-title">Book details</h1>
+      <p class="description">
+        Learn more about a book in your library.
+      </p>
+    </section>
+
+    <section class="catalogue" aria-labelledby="information-title">
+      <h2 id="information-title">About this book</h2>
+
+      <div class="book-card">
+       <p id="book-status" role="status">Loading book details...</p>
+        <div id="book-details"></div>
+      </div>
+    </section>
+  </main>
+</body>
+<script src="/js/bookDetails.js"></script>
+<script src="/js/navbar.js"></script>
+</html>

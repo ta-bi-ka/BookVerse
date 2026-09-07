@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login — BookVerse</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <nav class="navbar" aria-label="Main navigation">
+      <a class="brand" href="/pages/public/index.html">BookVerse</a>
+
+      <ul class="nav-links">
+        <li>
+          <a href="/pages/public/index.html">Home</a>
+        </li>
+        <li>
+          <a href="/pages/public/books.html">Browse Books</a>
+        </li>
+        <li>
+          <a href="/pages/public/login.html" aria-current="page">
+            Login
+          </a>
+        </li>
+        <li>
+          <a href="/pages/public/register.html">Register</a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="page-container">
+    <section class="auth-card" aria-labelledby="login-title">
+      <p class="brand-label">Your library account</p>
+      <h1 id="login-title">Welcome back</h1>
+      <p class="description">
+        Log in to manage your borrowing and bookshelves.
+      </p>
+
+      <form id="login-form" class="auth-form">
+  <div class="form-field">
+    <label for="login-identifier">Username or email</label>
+    <input
+      type="text"
+      id="login-identifier"
+      autocomplete="username"
+      maxlength="100"
+      required
+    >
+  </div>
+
+  <div class="form-field">
+    <label for="login-password">Password</label>
+    <input
+      type="password"
+      id="login-password"
+      autocomplete="current-password"
+      maxlength="72"
+      required
+    >
+  </div>
+
+  <button type="submit" id="login-button" class="auth-button" disabled>
+    Log in
+  </button>
+
+  <p id="login-status" class="description" role="status"></p>
+  <noscript>Please enable JavaScript to log in.</noscript>
+</form>
+    </section>
+  </main>
+  <script src="/js/login.js"></script>
+  <script src="/js/navbar.js"></script>
+</body>
+</html>

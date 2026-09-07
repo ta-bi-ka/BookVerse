@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register — BookVerse</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <nav class="navbar" aria-label="Main navigation">
+      <a class="brand" href="/pages/public/index.html">BookVerse</a>
+
+      <ul class="nav-links">
+        <li>
+          <a href="/pages/public/index.html">Home</a>
+        </li>
+        <li>
+          <a href="/pages/public/books.html">Browse Books</a>
+        </li>
+        <li>
+          <a href="/pages/public/login.html">Login</a>
+        </li>
+        <li>
+          <a href="/pages/public/register.html" aria-current="page">
+            Register
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="page-container">
+    <section class="auth-card" aria-labelledby="register-title">
+      <p class="brand-label">Join BookVerse</p>
+      <h1 id="register-title">Create an account</h1>
+      <p class="description">
+        Join your library to borrow books and organise your reading.
+      </p>
+
+      <form id="register-form" class="auth-form">
+        <div class="form-field">
+          <label for="register-name">Full name</label>
+          <input
+            type="text"
+            id="register-name"
+            autocomplete="name"
+            maxlength="100"
+            required
+          >
+        </div>
+
+        <div class="form-field">
+          <label for="register-username">Username</label>
+          <input
+            type="text"
+            id="register-username"
+            autocomplete="username"
+            maxlength="50"
+            pattern="[A-Za-z0-9_]+"
+            aria-describedby="username-help"
+            required
+          >
+          <p id="username-help" class="description">
+            Use letters, numbers, and underscores only.
+          </p>
+        </div>
+
+        <div class="form-field">
+          <label for="register-email">Email address</label>
+          <input
+            type="email"
+            id="register-email"
+            autocomplete="email"
+            maxlength="100"
+            required
+          >
+        </div>
+
+        <div class="form-field">
+          <label for="register-phone">Phone number (optional)</label>
+          <input
+            type="tel"
+            id="register-phone"
+            autocomplete="tel"
+            maxlength="20"
+          >
+        </div>
+
+        <div class="form-field">
+          <label for="register-password">Password</label>
+          <input
+            type="password"
+            id="register-password"
+            autocomplete="new-password"
+            minlength="6"
+            maxlength="72"
+            aria-describedby="password-help"
+            required
+          >
+          <p id="password-help" class="description">
+            Use between 6 and 72 characters.
+          </p>
+        </div>
+
+        <div class="form-field">
+          <label for="register-confirm-password">Confirm password</label>
+          <input
+            type="password"
+            id="register-confirm-password"
+            autocomplete="new-password"
+            minlength="6"
+            maxlength="72"
+            required
+          >
+        </div>
+
+        <button
+          type="submit"
+          id="register-button"
+          class="auth-button"
+          disabled
+        >
+          Create account
+        </button>
+
+        <p id="register-status" class="description" role="status"></p>
+        <noscript>Please enable JavaScript to create an account.</noscript>
+
+        <p class="description">
+          Already have an account?
+          <a href="/pages/public/login.html">Log in</a>
+        </p>
+      </form>
+    </section>
+  </main>
+
+  <script src="/js/navbar.js"></script>
+  <script src="/js/register.js"></script>
+</body>
+</html>
