@@ -1,6 +1,7 @@
 
 
 const express = require("express");
+const path = require("path");
 const session = require("express-session");
 const genreRoutes = require("./routes/genreRoutes");
 require("dotenv").config();
@@ -59,6 +60,8 @@ app.use("/api/book-copies", bookCopyRoutes);
 app.use("/api/books", bookRoutes);
 app.use("/api/borrows", borrowRoutes);
 app.use("/api/reservations", reservationRoutes);
+// Serve frontend HTML, CSS, JavaScript, and assets.
+app.use(express.static(path.join(__dirname, "../frontend")));
 app.use((req, res) => {
   res.status(404).json({
     success: false,

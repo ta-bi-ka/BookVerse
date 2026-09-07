@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Browse Books — BookVerse</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <nav class="navbar" aria-label="Main navigation">
+      <a class="brand" href="/pages/public/index.html">BookVerse</a>
+
+      <ul class="nav-links">
+        <li>
+          <a href="/pages/public/index.html">Home</a>
+        </li>
+        <li>
+          <a href="/pages/public/books.html" aria-current="page">
+            Browse Books
+          </a>
+        </li>
+        <li>
+          <span class="nav-disabled" aria-disabled="true">Login</span>
+        </li>
+        <li>
+          <span class="nav-disabled" aria-disabled="true">Register</span>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="page-container">
+    <section class="welcome-card" aria-labelledby="books-title">
+      <p class="brand-label">Library catalogue</p>
+      <h1 id="books-title">Browse books</h1>
+      <p class="description">
+        Explore the library and discover your next read.
+      </p>
+    </section>
+
+    <section class="catalogue" aria-labelledby="catalogue-title">
+      <h2 id="catalogue-title">Library collection</h2>
+<form id="book-search-form" class="book-search">
+  <label for="book-search-input">Search by title or ISBN</label>
+
+  <div class="search-controls">
+    <input
+      type="search"
+      id="book-search-input"
+      placeholder="Enter a book title or ISBN"
+    >
+    <button type="submit">Search</button>
+    <button type="button" id="clear-search" class="secondary-button">
+      Clear
+    </button>
+    </div>
+   </form>
+      <p id="books-status" role="status">Loading books...</p>
+      <div id="books-grid" class="books-grid"></div>
+
+      <noscript>Please enable JavaScript to load the books.</noscript>
+    </section>
+  </main>
+
+  <script src="/js/books.js"></script>
+</body>
+</html>
