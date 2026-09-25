@@ -1,20 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Borrowing Requests — BookVerse</title>
   <link rel="stylesheet" href="/css/style.css">
 </head>
+
 <body>
   <header class="site-header">
     <nav class="navbar" aria-label="Main navigation">
       <a class="brand" href="/pages/public/index.html">BookVerse</a>
 
       <ul class="nav-links">
-        <li><a href="/pages/public/index.html">Home</a></li>
-        <li><a href="/pages/public/books.html">Browse Books</a></li>
-        <li><a href="/pages/public/login.html">Login</a></li>
+        <li>
+          <a href="/pages/public/index.html">Home</a>
+        </li>
+        <li>
+          <a href="/pages/public/books.html">Browse Books</a>
+        </li>
+        <li>
+          <a href="/pages/public/login.html">Login</a>
+        </li>
       </ul>
     </nav>
   </header>
@@ -24,30 +32,33 @@
       <p class="brand-label">Librarian controls</p>
       <h1 id="page-title">Borrowing requests</h1>
       <p class="description">
-        Review requests to borrow, return, or renew books.
+        Review each book's waiting list in order, along with
+        return and renewal requests.
       </p>
     </section>
 
     <section class="catalogue" aria-labelledby="pending-title">
       <h2 id="pending-title">Pending requests</h2>
 
-      <p id="review-status" role="status">Loading requests...</p>
+      <p id="review-status" role="status">
+        Loading requests...
+      </p>
 
       <button id="refresh-requests" class="nav-logout" type="button">
         Refresh
       </button>
 
-      <div
-        id="review-list"
-        class="books-grid"
-        style="margin-top: 20px;"
-      ></div>
+      <!-- librarianRequests.js adds the per-book lists here. -->
+      <div id="review-list" style="margin-top: 20px;"></div>
 
-      <noscript>Please enable JavaScript to review requests.</noscript>
+      <noscript>
+        Please enable JavaScript to review requests.
+      </noscript>
     </section>
   </main>
 
   <script src="/js/navbar.js"></script>
   <script src="/js/librarianRequests.js"></script>
 </body>
+
 </html>

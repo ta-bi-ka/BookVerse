@@ -1,11 +1,12 @@
 const borrowsStatus = document.getElementById("borrows-status");
 const borrowsList = document.getElementById("borrows-list");
+const requestsStatus = document.getElementById("requests-status");
+const requestsList = document.getElementById("requests-list");
 
 function formatBorrowDate(value) {
-  if (!value) return "Not returned";
+  if (!value) return "Not available";
 
   const date = new Date(value);
-
   if (Number.isNaN(date.getTime())) return "Not available";
 
   return date.toLocaleDateString("en-GB", {
@@ -22,278 +23,48 @@ function addBorrowDetail(list, label, value) {
 
   const description = document.createElement("dd");
   description.textContent = String(value ?? "Not available");
-
   list.append(term, description);
 }
 
-async function loadMyBorrows() {
-  borrowsStatus.textContent = "Loading your borrowing history...";
-  borrowsList.replaceChildren();
+async function getData(url) {
+  const response = await fetch(url, {
+    credentials: "same-origin",
+    cache: "no-store",
+  });
 
-  try {
-    const response = await fetch("/api/borrows/my", {
-      credentials: "same-origin",
-      cache: "no-store",
-    });
-
-    if (response.status === 401) {
-      window.location.replace("/pages/public/login.html");
-      return;
-    }
-
-    if (response.status === 403) {
-      borrowsStatus.textContent =
-        "This page is available to Student accounts only.";
-      return;
-    }
-
-    const result = await response.json();
-
-    if (
-      !response.ok ||
-      result.success !== true ||
-      !Array.isArray(result.data)
-    ) {
-      throw new Error("Unexpected borrowing history response");
-    }
-
-    if (result.data.length === 0) {
-      borrowsStatus.textContent = "You have not borrowed any books yet.";
-      return;
-    }
-
-    const fragment = document.createDocumentFragment();
-
-    result.data.forEach((borrow) => {
-      const card = document.createElement("article");
-      card.className = "borrow-record";
-
-      const heading = document.createElement("h3");
-      const link = document.createElement("a");
-      link.className = "book-title-link";
-      link.href =
-        `/pages/public/book-details.html?id=${encodeURIComponent(borrow.book_id)}`;
-      link.textContent = borrow.title || "Untitled book";
-      heading.appendChild(link);
-
-      const details = document.createElement("dl");
-      details.className = "book-information";
-
-      addBorrowDetail(
-        details,
-        "Status",
-        borrow.return_date ? "Returned" : "On loan"
-      );
-      addBorrowDetail(
-        details,
-        "Borrowed",
-        formatBorrowDate(borrow.borrow_date)
-      );
-      addBorrowDetail(
-        details,
-        "Due date",
-        formatBorrowDate(borrow.due_date)
-      );
-      addBorrowDetail(
-        details,
-        "Returned",
-        formatBorrowDate(borrow.return_date)
-      );
-      addBorrowDetail(details, "Renewals", borrow.renew_count);
-      addBorrowDetail(details, "Copy barcode", borrow.barcode);
-
-      card.append(heading, details);
-      if (!borrow.return_date) {
-        const returnButton = document.createElement("button");
-        returnButton.type = "button";
-        returnButton.className = "auth-button";
-        returnButton.textContent = "Request return";
-        returnButton.style.marginTop = "20px";
-
-        const returnStatus = document.createElement("p");
-        returnStatus.setAttribute("role", "status");
-
-        returnButton.addEventListener("click", async () => {
-          const confirmed = window.confirm(
-            `Return "${borrow.title || "this book"}"?`
-          );
-
-          if (!confirmed) return;
-
-          returnButton.disabled = true;
-          returnButton.textContent = "Submitting request...";
-          returnStatus.textContent = "";
-
-          try {
-            const response = await fetch(
-              `/api/borrows/${encodeURIComponent(borrow.borrow_id)}/return`,
-              {
-                method: "POST",
-                credentials: "same-origin",
-              }
-            );
-
-            if (response.status === 401) {
-              window.location.assign("/pages/public/login.html");
-              return;
-            }
-
-            const result = await response.json();
-
-            if (!response.ok || result.success !== true) {
-              if (response.status >= 500) {
-                returnStatus.textContent =
-                  "Could not confirm the return. Refresh this page to check the loan before retrying.";
-                returnButton.textContent = "Check loan status";
-              } else {
-                returnStatus.textContent =
-                  result.message || "This book could not be returned.";
-                returnButton.disabled = false;
-                returnButton.textContent = "Request return";
-              }
-              return;
-            }
-
-            // Reload the history to display the saved return date.
-            returnButton.disabled = true;
-            renewButton.disabled = true;
-
-            returnButton.textContent = "Request pending";
-            renewButton.textContent = "Awaiting librarian";
-
-            returnStatus.textContent = result.message;
-            await loadMyRequests();
-          } catch (error) {
-            returnStatus.textContent =
-              "Could not confirm the return. Refresh this page to check the loan before retrying.";
-            returnButton.textContent = "Check loan status";
-          }
-        });
-
-        card.append(returnButton, returnStatus);
-        const renewButton = document.createElement("button");
-        renewButton.type = "button";
-        renewButton.className = "auth-button";
-        renewButton.textContent = "Request renewal";
-        renewButton.style.marginTop = "12px";
-
-        renewButton.addEventListener("click", async () => {
-          if (returnButton.disabled || renewButton.disabled) return;
-
-          const confirmed = window.confirm(
-            `Request a renewal for "${borrow.title || "this book"}"?`
-          );
-
-          if (!confirmed) return;
-
-          // Prevent returning the same loan while renewal is processing.
-          renewButton.disabled = true;
-          returnButton.disabled = true;
-          renewButton.textContent = "Submitting request...";
-          returnStatus.textContent = "";
-
-          try {
-            const response = await fetch(
-              `/api/borrows/${encodeURIComponent(borrow.borrow_id)}/renew`,
-              {
-                method: "POST",
-                credentials: "same-origin",
-              }
-            );
-
-            if (response.status === 401) {
-              window.location.assign("/pages/public/login.html");
-              return;
-            }
-
-            const result = await response.json();
-
-            if (!response.ok || result.success !== true) {
-              if (response.status >= 500) {
-                returnStatus.textContent =
-                  "Could not confirm renewal. Refresh this page to check the due date and renewal count before retrying.";
-                renewButton.textContent = "Check loan status";
-              } else {
-                returnStatus.textContent =
-                  result.message || "This loan could not be renewed.";
-                renewButton.disabled = false;
-                returnButton.disabled = false;
-                renewButton.textContent = "Request renewal";
-              }
-              return;
-            }
-
-            // Reload the saved due date and renewal count.
-            returnButton.disabled = true;
-            renewButton.disabled = true;
-
-            returnButton.textContent = "Request pending";
-            renewButton.textContent = "Awaiting librarian";
-
-            returnStatus.textContent = result.message;
-            await loadMyRequests();
-          } catch (error) {
-            returnStatus.textContent =
-              "Could not confirm renewal. Refresh this page to check the due date and renewal count before retrying.";
-            renewButton.textContent = "Check loan status";
-          }
-        });
-
-        card.appendChild(renewButton);
-      }
-      fragment.appendChild(card);
-    });
-
-    borrowsList.appendChild(fragment);
-
-    const count = result.data.length;
-    borrowsStatus.textContent =
-      `${count} borrowing ${count === 1 ? "record" : "records"}.`;
-  } catch (error) {
-    borrowsStatus.textContent =
-      "Could not load your borrowing history. Please refresh and try again.";
+  if (response.status === 401) {
+    window.location.replace("/pages/public/login.html");
+    return null;
   }
-}
 
-loadMyBorrows();
-const requestsStatus = document.getElementById("requests-status");
-const requestsList = document.getElementById("requests-list");
+  if (response.status === 403) {
+    throw new Error("This page is available to Student accounts only.");
+  }
+
+  const result = await response.json();
+
+  if (
+    !response.ok ||
+    result.success !== true ||
+    !Array.isArray(result.data)
+  ) {
+    throw new Error(
+      result.message || "The server returned an unexpected response."
+    );
+  }
+
+  return result.data;
+}
 
 async function loadMyRequests() {
   requestsStatus.textContent = "Loading requests...";
   requestsList.replaceChildren();
 
   try {
-    const response = await fetch("/api/borrows/requests/my", {
-      credentials: "same-origin",
-      cache: "no-store",
-    });
+    const requests = await getData("/api/borrows/requests/my");
+    if (!requests) return null;
 
-    if (response.status === 401) {
-      window.location.replace("/pages/public/login.html");
-      return;
-    }
-
-    if (response.status === 403) {
-      requestsStatus.textContent =
-        "Borrowing requests are available to Student accounts only.";
-      return;
-    }
-
-    const result = await response.json();
-
-    if (
-      !response.ok ||
-      result.success !== true ||
-      !Array.isArray(result.data)
-    ) {
-      throw new Error("Could not load requests");
-    }
-
-    if (result.data.length === 0) {
-      requestsStatus.textContent = "You have no borrowing requests yet.";
-      return;
-    }
+    const pendingLoanIds = new Set();
 
     const typeLabels = {
       borrow: "Borrow",
@@ -301,15 +72,17 @@ async function loadMyRequests() {
       renew: "Renewal",
     };
 
-    const statusLabels = {
-      pending: "Pending",
-      approved: "Approved",
-      declined: "Declined",
-    };
-
     const fragment = document.createDocumentFragment();
 
-    result.data.forEach((request) => {
+    for (const request of requests) {
+      if (
+        request.status === "pending" &&
+        (request.request_type === "return" ||
+          request.request_type === "renew")
+      ) {
+        pendingLoanIds.add(Number(request.borrow_id));
+      }
+
       const card = document.createElement("article");
       card.className = "book-card";
       card.style.marginBottom = "16px";
@@ -326,18 +99,44 @@ async function loadMyRequests() {
         typeLabels[request.request_type] || request.request_type
       );
 
-      addBorrowDetail(
-        details,
-        "Status",
-        statusLabels[request.status] || request.status
-      );
+      let statusText =
+        {
+          pending: "Pending",
+          approved: "Approved",
+          declined: "Declined",
+        }[request.status] || request.status;
+
+      if (
+        request.status === "approved" &&
+        request.request_type === "renew"
+      ) {
+        statusText = "Renewed";
+      } else if (
+        request.status === "approved" &&
+        request.request_type === "return"
+      ) {
+        statusText = "Returned";
+      }
+
+      addBorrowDetail(details, "Status", statusText);
+
+      if (
+        request.request_type === "borrow" &&
+        request.status === "pending" &&
+        Number.isInteger(Number(request.queue_position)) &&
+        Number(request.queue_position) > 0
+      ) {
+        addBorrowDetail(
+          details,
+          "Queue position",
+          request.queue_position
+        );
+      }
 
       addBorrowDetail(
         details,
         "Submitted",
-        request.requested_on
-          ? formatBorrowDate(request.requested_on)
-          : "Not available"
+        formatBorrowDate(request.requested_on)
       );
 
       if (request.reviewed_on) {
@@ -349,22 +148,252 @@ async function loadMyRequests() {
       }
 
       if (request.decision_reason) {
-        addBorrowDetail(details, "Reason", request.decision_reason);
+        addBorrowDetail(
+          details,
+          "Reason",
+          request.decision_reason
+        );
       }
 
       card.append(heading, details);
       fragment.appendChild(card);
-    });
+    }
 
     requestsList.appendChild(fragment);
 
-    const count = result.data.length;
-    requestsStatus.textContent =
-      `${count} ${count === 1 ? "request" : "requests"}.`;
+    requestsStatus.textContent = requests.length
+      ? `${requests.length} ${requests.length === 1 ? "request" : "requests"
+      }.`
+      : "You have no borrowing requests yet.";
+
+    return pendingLoanIds;
   } catch (error) {
     requestsStatus.textContent =
+      error.message ||
       "Could not load your requests. Please refresh and try again.";
+    return null;
   }
 }
 
-loadMyRequests();
+async function submitLoanRequest(
+  borrow,
+  type,
+  buttons,
+  message
+) {
+  const action = type === "return" ? "return" : "renew";
+
+  const promptText =
+    type === "return"
+      ? `Request a return for "${borrow.title || "this book"
+      }"? Only submit this after handing the physical book to the librarian.`
+      : `Request a renewal for "${borrow.title || "this book"
+      }"?`;
+
+  if (!window.confirm(promptText)) return;
+
+  for (const button of buttons) {
+    button.disabled = true;
+  }
+
+  const button =
+    type === "return" ? buttons[0] : buttons[1];
+
+  button.textContent = "Submitting request...";
+  message.textContent = "";
+
+  try {
+    const response = await fetch(
+      `/api/borrows/${encodeURIComponent(
+        borrow.borrow_id
+      )}/${action}`,
+      {
+        method: "POST",
+        credentials: "same-origin",
+      }
+    );
+
+    if (response.status === 401) {
+      window.location.assign("/pages/public/login.html");
+      return;
+    }
+
+    const result = await response.json();
+
+    if (!response.ok || result.success !== true) {
+      if (response.status >= 500) {
+        message.textContent =
+          "Could not confirm the request. Refresh this page to check My requests before trying again.";
+        button.textContent = "Check My requests";
+        return;
+      }
+
+      message.textContent =
+        result.message || "Could not submit the request.";
+
+      for (const control of buttons) {
+        control.disabled = false;
+      }
+
+      button.textContent =
+        type === "return"
+          ? "Request return"
+          : "Request renewal";
+      return;
+    }
+
+    message.textContent =
+      result.message ||
+      "Request pending librarian approval.";
+
+    await refreshBorrowingPage();
+  } catch (error) {
+    message.textContent =
+      "Could not confirm the request. Refresh this page to check My requests before trying again.";
+    button.textContent = "Check My requests";
+  }
+}
+
+async function loadMyBorrows(pendingLoanIds) {
+  borrowsStatus.textContent =
+    "Loading your borrowing history...";
+  borrowsList.replaceChildren();
+
+  try {
+    const borrows = await getData("/api/borrows/my");
+    if (!borrows) return;
+
+    const fragment = document.createDocumentFragment();
+
+    for (const borrow of borrows) {
+      const card = document.createElement("article");
+      card.className = "borrow-record";
+
+      const heading = document.createElement("h3");
+      const link = document.createElement("a");
+      link.className = "book-title-link";
+      link.href =
+        `/pages/public/book-details.html?id=${encodeURIComponent(
+          borrow.book_id
+        )}`;
+      link.textContent = borrow.title || "Untitled book";
+      heading.appendChild(link);
+
+      const details = document.createElement("dl");
+      details.className = "book-information";
+
+      addBorrowDetail(
+        details,
+        "Status",
+        borrow.return_date ? "Returned" : "On loan"
+      );
+
+      addBorrowDetail(
+        details,
+        "Borrowed",
+        formatBorrowDate(borrow.borrow_date)
+      );
+
+      addBorrowDetail(
+        details,
+        "Due date",
+        formatBorrowDate(borrow.due_date)
+      );
+
+      addBorrowDetail(
+        details,
+        "Returned",
+        borrow.return_date
+          ? formatBorrowDate(borrow.return_date)
+          : "Not returned"
+      );
+
+      addBorrowDetail(
+        details,
+        "Renewals",
+        borrow.renew_count
+      );
+
+      addBorrowDetail(
+        details,
+        "Copy barcode",
+        borrow.barcode
+      );
+
+      card.append(heading, details);
+
+      if (!borrow.return_date) {
+        const message = document.createElement("p");
+        message.setAttribute("role", "status");
+
+        if (pendingLoanIds === null) {
+          message.textContent =
+            "Could not check pending requests. Refresh this page before submitting a return or renewal.";
+        } else if (
+          pendingLoanIds.has(Number(borrow.borrow_id))
+        ) {
+          message.textContent =
+            "Return or renewal request pending librarian approval.";
+        } else {
+          const returnButton =
+            document.createElement("button");
+          returnButton.type = "button";
+          returnButton.className = "auth-button";
+          returnButton.textContent = "Request return";
+          returnButton.style.marginTop = "20px";
+
+          const renewButton =
+            document.createElement("button");
+          renewButton.type = "button";
+          renewButton.className = "auth-button";
+          renewButton.textContent = "Request renewal";
+          renewButton.style.marginTop = "12px";
+
+          const buttons = [returnButton, renewButton];
+
+          returnButton.addEventListener("click", () => {
+            submitLoanRequest(
+              borrow,
+              "return",
+              buttons,
+              message
+            );
+          });
+
+          renewButton.addEventListener("click", () => {
+            submitLoanRequest(
+              borrow,
+              "renew",
+              buttons,
+              message
+            );
+          });
+
+          card.append(returnButton, renewButton);
+        }
+
+        card.appendChild(message);
+      }
+
+      fragment.appendChild(card);
+    }
+
+    borrowsList.appendChild(fragment);
+
+    borrowsStatus.textContent = borrows.length
+      ? `${borrows.length} borrowing ${borrows.length === 1 ? "record" : "records"
+      }.`
+      : "You have not borrowed any books yet.";
+  } catch (error) {
+    borrowsStatus.textContent =
+      error.message ||
+      "Could not load your borrowing history. Please refresh and try again.";
+  }
+}
+
+async function refreshBorrowingPage() {
+  const pendingLoanIds = await loadMyRequests();
+  await loadMyBorrows(pendingLoanIds);
+}
+
+refreshBorrowingPage();

@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>My Borrows — BookVerse</title>
   <link rel="stylesheet" href="/css/style.css">
 </head>
+
 <body>
   <header class="site-header">
     <nav class="navbar" aria-label="Main navigation">
@@ -18,7 +20,7 @@
         <li>
           <a href="/pages/public/books.html">Browse Books</a>
         </li>
-        
+
         <li>
           <a href="/pages/public/login.html">Login</a>
         </li>
@@ -34,14 +36,13 @@
         Keep track of your borrowed books and their due dates.
       </p>
     </section>
-<section class="catalogue" aria-labelledby="requests-title">
-  <h2 id="requests-title">My requests</h2>
-  <p id="requests-status" role="status">Loading requests...</p>
-  <div id="requests-list"></div>
-</section>
+    <section class="catalogue" aria-labelledby="requests-title">
+      <h2 id="requests-title">My requests</h2>
+      <p id="requests-status" role="status">Loading requests...</p>
+      <div id="requests-list"></div>
+    </section>
     <section class="catalogue" aria-labelledby="history-title">
       <h2 id="history-title">Borrowing history</h2>
-
       <div class="book-card">
         <p id="borrows-status" role="status">
           Loading your borrowing history...
@@ -50,7 +51,6 @@
       </div>
     </section>
   </main>
-
   <script src="/js/navbar.js"></script>
   <script src="/js/borrows.js"></script>
 </body>

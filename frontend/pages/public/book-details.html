@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Book Details — BookVerse</title>
   <link rel="stylesheet" href="/css/style.css">
 </head>
+
 <body>
   <header class="site-header">
     <nav class="navbar" aria-label="Main navigation">
@@ -45,33 +47,25 @@
       <h2 id="information-title">About this book</h2>
 
       <div class="book-card">
-       <p id="book-status" role="status">Loading book details...</p>
+        <p id="book-status" role="status">Loading book details...</p>
         <div id="book-details"></div>
       </div>
     </section>
-   <section class="catalogue" aria-labelledby="borrow-title">
-  <h2 id="borrow-title">Borrow this book</h2>
+    <section class="catalogue" aria-labelledby="borrow-title">
+      <h2 id="borrow-title">Borrow or reserve this book</h2>
+      <div class="book-card">
+        <p id="borrow-status" role="status">
+          Checking your login status...
+        </p>
 
-  <div class="book-card">
-    <p id="borrow-status" role="status">
-      Checking your login status...
-    </p>
-
-    <button
-      type="button"
-      id="borrow-button"
-      class="auth-button"
-      hidden
-      disabled
-    >
-      Borrow this book
-    </button>
-
-    <a id="borrow-login" href="/pages/public/login.html" hidden>
-      Log in to borrow
-    </a>
-  </div>
-</section>
+        <button type="button" id="borrow-button" class="auth-button" hidden disabled>
+          Borrow this book
+        </button>
+        <a id="borrow-login" href="/pages/public/login.html" hidden>
+          Log in to borrow
+        </a>
+      </div>
+    </section>
   </main>
 </body>
 <dialog id="wishlist-dialog" aria-labelledby="wishlist-title">
@@ -83,12 +77,7 @@
     <select id="wishlist-shelf"></select>
   </div>
 
-  <button
-    id="wishlist-add"
-    class="auth-button"
-    type="button"
-    style="margin-top: 16px;"
-  >
+  <button id="wishlist-add" class="auth-button" type="button" style="margin-top: 16px;">
     Add to selected bookshelf
   </button>
 
@@ -97,20 +86,10 @@
   <form id="wishlist-create-form">
     <div class="form-field">
       <label for="wishlist-name">Create a new private bookshelf</label>
-      <input
-        id="wishlist-name"
-        type="text"
-        maxlength="100"
-        placeholder="For example: My wishlist"
-        required
-      >
+      <input id="wishlist-name" type="text" maxlength="100" placeholder="For example: My wishlist" required>
     </div>
 
-    <button
-      class="auth-button"
-      type="submit"
-      style="margin-top: 16px;"
-    >
+    <button class="auth-button" type="submit" style="margin-top: 16px;">
       Create bookshelf
     </button>
   </form>
@@ -124,4 +103,5 @@
 <script src="/js/wishlist.js"></script>
 <script src="/js/bookDetails.js"></script>
 <script src="/js/navbar.js"></script>
+
 </html>

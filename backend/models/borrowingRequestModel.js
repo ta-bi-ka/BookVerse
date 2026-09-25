@@ -1,55 +1,87 @@
 const { pool } = require("../config/db");
 
 const createBorrowRequest = async (userId, bookId) => {
-  const bookResult = await pool.query(
-    "SELECT book_id FROM books WHERE book_id = $1",
-    [bookId]
-  );
+  const client = await pool.connect();
 
-  if (bookResult.rows.length === 0) {
-    const error = new Error("Book not found");
-    error.statusCode = 404;
+  try {
+    await client.query("BEGIN");
+
+    // Serialize new requests and librarian decisions for this book.
+    const bookResult = await client.query(
+      `
+      SELECT book_id
+      FROM books
+      WHERE book_id = $1
+      FOR UPDATE
+      `,
+      [bookId]
+    );
+
+    if (bookResult.rows.length === 0) {
+      const error = new Error("Book not found");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    const activeBorrow = await client.query(
+      `
+      SELECT b.borrow_id
+      FROM borrows b
+      JOIN book_copies c ON c.copy_id = b.copy_id
+      WHERE b.user_id = $1
+        AND c.book_id = $2
+        AND b.return_date IS NULL
+      LIMIT 1
+      `,
+      [userId, bookId]
+    );
+
+    if (activeBorrow.rows.length > 0) {
+      const error = new Error(
+        "You already have this book on loan"
+      );
+      error.statusCode = 409;
+      throw error;
+    }
+
+    const result = await client.query(
+      `
+      INSERT INTO borrowing_requests (
+        user_id,
+        book_id,
+        request_type,
+        status
+      )
+      VALUES ($1, $2, 'borrow', 'pending')
+      RETURNING *
+      `,
+      [userId, bookId]
+    );
+
+    await client.query("COMMIT");
+    return result.rows[0];
+  } catch (error) {
+    await client.query("ROLLBACK");
     throw error;
+  } finally {
+    client.release();
   }
-
-  const activeBorrow = await pool.query(
-    `
-    SELECT b.borrow_id
-    FROM borrows b
-    JOIN book_copies c ON c.copy_id = b.copy_id
-    WHERE b.user_id = $1
-      AND c.book_id = $2
-      AND b.return_date IS NULL
-    LIMIT 1
-    `,
-    [userId, bookId]
-  );
-
-  if (activeBorrow.rows.length > 0) {
-    const error = new Error("You already have this book on loan");
-    error.statusCode = 409;
-    throw error;
-  }
-
-  const result = await pool.query(
-    `
-    INSERT INTO borrowing_requests (
-      user_id,
-      book_id,
-      request_type,
-      status
-    )
-    VALUES ($1, $2, 'borrow', 'pending')
-    RETURNING *
-    `,
-    [userId, bookId]
-  );
-
-  return result.rows[0];
 };
+
 const getMyRequests = async (userId) => {
   const result = await pool.query(
     `
+    WITH pending_borrow_queue AS (
+      SELECT
+        request_id,
+        ROW_NUMBER() OVER (
+          PARTITION BY book_id
+          ORDER BY requested_on, request_id
+        )::integer AS queue_position
+      FROM borrowing_requests
+      WHERE request_type = 'borrow'
+        AND status = 'pending'
+    )
     SELECT
       r.request_id,
       r.book_id,
@@ -59,9 +91,12 @@ const getMyRequests = async (userId) => {
       r.status,
       r.requested_on,
       r.reviewed_on,
-      r.decision_reason
+      r.decision_reason,
+      q.queue_position
     FROM borrowing_requests r
     JOIN books b ON b.book_id = r.book_id
+    LEFT JOIN pending_borrow_queue q
+      ON q.request_id = r.request_id
     WHERE r.user_id = $1
     ORDER BY r.requested_on DESC, r.request_id DESC
     `,
@@ -70,9 +105,21 @@ const getMyRequests = async (userId) => {
 
   return result.rows;
 };
+
 const getPendingRequests = async () => {
   const result = await pool.query(
     `
+    WITH pending_borrow_queue AS (
+      SELECT
+        request_id,
+        ROW_NUMBER() OVER (
+          PARTITION BY book_id
+          ORDER BY requested_on, request_id
+        )::integer AS queue_position
+      FROM borrowing_requests
+      WHERE request_type = 'borrow'
+        AND status = 'pending'
+    )
     SELECT
       r.request_id,
       r.user_id,
@@ -83,17 +130,54 @@ const getPendingRequests = async () => {
       r.borrow_id,
       r.request_type,
       r.status,
-      r.requested_on
+      r.requested_on,
+      q.queue_position,
+      (
+        SELECT COUNT(*)::integer
+        FROM book_copies c
+        WHERE c.book_id = r.book_id
+          AND c.status = 'available'
+          AND NOT EXISTS (
+            SELECT 1
+            FROM borrows active_loan
+            WHERE active_loan.copy_id = c.copy_id
+              AND active_loan.return_date IS NULL
+          )
+      ) AS available_copies
     FROM borrowing_requests r
     JOIN users u ON u.user_id = r.user_id
     JOIN books b ON b.book_id = r.book_id
+    LEFT JOIN pending_borrow_queue q
+      ON q.request_id = r.request_id
     WHERE r.status = 'pending'
-    ORDER BY r.requested_on, r.request_id
+    ORDER BY
+      r.book_id,
+      r.requested_on,
+      r.request_id
     `
   );
 
   return result.rows;
 };
+
+const findFirstPendingBorrow = async (client, bookId) => {
+  const result = await client.query(
+    `
+    SELECT request_id, user_id, book_id
+    FROM borrowing_requests
+    WHERE book_id = $1
+      AND request_type = 'borrow'
+      AND status = 'pending'
+    ORDER BY requested_on, request_id
+    LIMIT 1
+    FOR UPDATE
+    `,
+    [bookId]
+  );
+
+  return result.rows[0] || null;
+};
+
 const lockLoanForRequest = async (client, borrowId) => {
   const result = await client.query(
     `
@@ -139,6 +223,7 @@ const insertLoanRequest = async (
 
   return result.rows[0];
 };
+
 const findReviewUser = async (client, userId) => {
   const result = await client.query(
     `
@@ -312,10 +397,30 @@ const saveRequestDecision = async (
 
   return result.rows[0] || null;
 };
+
+// Kept temporarily so an older service importing it does not fail.
+// The updated approval service will use findFirstPendingBorrow instead.
+const findFirstActiveReservation = async (client, bookId) => {
+  const result = await client.query(
+    `
+    SELECT reservation_id, user_id
+    FROM reservations
+    WHERE book_id = $1
+      AND status = 'active'
+    ORDER BY queue_position, reservation_date, reservation_id
+    LIMIT 1
+    `,
+    [bookId]
+  );
+
+  return result.rows[0] || null;
+};
+
 module.exports = {
   createBorrowRequest,
   getMyRequests,
   getPendingRequests,
+  findFirstPendingBorrow,
   lockLoanForRequest,
   insertLoanRequest,
   findReviewUser,
@@ -326,4 +431,5 @@ module.exports = {
   applyApprovedReturn,
   applyApprovedRenewal,
   saveRequestDecision,
+  findFirstActiveReservation,
 };

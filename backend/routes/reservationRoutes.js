@@ -1,11 +1,9 @@
 const express = require("express");
 
 const {
-  createReservation,
   getMyReservations,
   getAllReservations,
   cancelReservation,
-  fulfillReservation,
 } = require("../controllers/reservationController");
 
 const {
@@ -15,13 +13,8 @@ const {
 
 const router = express.Router();
 
-router.post(
-  "/",
-  requireAuth,
-  requireRole("Student"),
-  createReservation
-);
-
+// Existing reservation records remain accessible during the transition.
+// New borrow requests use POST /api/borrows instead.
 router.get(
   "/my",
   requireAuth,
@@ -40,13 +33,6 @@ router.post(
   "/:id/cancel",
   requireAuth,
   cancelReservation
-);
-
-router.post(
-  "/:id/fulfill",
-  requireAuth,
-  requireRole("Admin", "Librarian"),
-  fulfillReservation
 );
 
 module.exports = router;
