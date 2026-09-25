@@ -19,6 +19,7 @@ const bookCopyRoutes = require("./routes/bookCopyRoutes");
 const bookRoutes = require("./routes/bookRoutes");
 const borrowRoutes = require("./routes/borrowRoutes");
 const reservationRoutes = require("./routes/reservationRoutes");
+const staffDirectoryRoutes = require("./routes/staffDirectoryRoutes");
 
 const app = express();
 
@@ -60,6 +61,7 @@ app.use("/api/book-copies", bookCopyRoutes);
 app.use("/api/books", bookRoutes);
 app.use("/api/borrows", borrowRoutes);
 app.use("/api/reservations", reservationRoutes);
+app.use("/api/staff-directory", staffDirectoryRoutes);
 // Serve frontend HTML, CSS, JavaScript, and assets.
 app.use(express.static(path.join(__dirname, "../frontend")));
 app.use((req, res) => {

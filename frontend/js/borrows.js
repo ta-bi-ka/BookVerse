@@ -321,7 +321,20 @@ async function loadMyBorrows(pendingLoanIds) {
       );
 
       card.append(heading, details);
+      const reviewButton = document.createElement("button");
+      reviewButton.type = "button";
+      reviewButton.className = "nav-logout borrow-review-button";
+      reviewButton.textContent = "Give review";
 
+      reviewButton.addEventListener("click", () => {
+        window.location.assign(
+          `/pages/public/book-details.html?id=${encodeURIComponent(
+            borrow.book_id
+          )}&review=1`
+        );
+      });
+
+      card.appendChild(reviewButton);
       if (!borrow.return_date) {
         const message = document.createElement("p");
         message.setAttribute("role", "status");

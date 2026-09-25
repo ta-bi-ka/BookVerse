@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Staffs</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <nav class="navbar" aria-label="Main navigation">
+      <a class="brand" href="/pages/public/index.html">BookVerse</a>
+      <ul class="nav-links">
+        <li><a href="/pages/public/index.html">Home</a></li>
+        <li><a href="/pages/public/books.html">Browse Books</a></li>
+        <li><a href="/pages/public/login.html">Login</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="page-container">
+    <section class="welcome-card">
+      <p class="brand-label">Library directory</p>
+      <h1>See Staffs</h1>
+      <p class="description">
+        View the people registered with the library.
+      </p>
+    </section>
+
+    <p id="directory-status" role="status">Loading directory...</p>
+
+    <section id="librarians-section" class="catalogue" hidden>
+      <h2>Librarians</h2>
+      <div id="librarians-list" class="books-grid"></div>
+    </section>
+
+    <section id="students-section" class="catalogue" hidden>
+      <h2>Students</h2>
+      <div id="students-list" class="books-grid"></div>
+    </section>
+  </main>
+
+  <script src="/js/navbar.js"></script>
+  <script src="/js/staffs.js"></script>
+</body>
+</html>

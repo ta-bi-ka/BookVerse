@@ -138,6 +138,21 @@ const deleteReview = async (reviewId) => {
   return result.rows[0];
 };
 
+const hasConfirmedBorrow = async (userId, bookId) => {
+  const result = await pool.query(
+    `
+    SELECT 1
+    FROM borrows br
+    JOIN book_copies bc ON bc.copy_id = br.copy_id
+    WHERE br.user_id = $1
+      AND bc.book_id = $2
+    LIMIT 1
+    `,
+    [userId, bookId]
+  );
+
+  return result.rows.length > 0;
+};
 module.exports = {
   getAllReviews,
   getReviewsByBook,
@@ -147,4 +162,5 @@ module.exports = {
   createReview,
   updateReview,
   deleteReview,
+  hasConfirmedBorrow,
 };

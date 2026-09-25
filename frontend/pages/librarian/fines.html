@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Fines — BookVerse</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <nav class="navbar" aria-label="Main navigation">
+      <a class="brand" href="/pages/public/index.html">BookVerse</a>
+      <ul class="nav-links">
+        <li><a href="/pages/public/index.html">Home</a></li>
+        <li><a href="/pages/public/books.html">Browse Books</a></li>
+        <li><a href="/pages/public/login.html">Login</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="page-container">
+    <section class="welcome-card">
+      <p class="brand-label">Librarian controls</p>
+      <h1>Manage fines</h1>
+      <p class="description">
+        Record fines against borrowing records and update their payment status.
+      </p>
+    </section>
+
+    <button type="button" class="nav-logout" data-back
+      data-fallback="/pages/librarian/requests.html">
+      Back
+    </button>
+
+    <p id="fine-status" role="status">Loading...</p>
+
+    <section class="catalogue" aria-labelledby="create-fine-title">
+      <h2 id="create-fine-title">Create a fine</h2>
+
+      <form id="fine-form" class="book-card" hidden>
+        <div class="form-field">
+          <label for="fine-borrow">Borrowing record *</label>
+          <select id="fine-borrow" required></select>
+        </div>
+
+        <div class="form-field">
+          <label for="fine-amount">Amount *</label>
+          <input id="fine-amount" type="number" min="0" step="0.01"
+            required>
+        </div>
+
+        <div class="form-field">
+          <label for="fine-reason">Reason *</label>
+          <input id="fine-reason" type="text" maxlength="100" required>
+        </div>
+
+        <button id="create-fine" type="submit" class="auth-button">
+          Create fine
+        </button>
+      </form>
+    </section>
+
+    <section class="catalogue" aria-labelledby="existing-fines-title">
+      <h2 id="existing-fines-title">Recorded fines</h2>
+      <div id="fine-list" class="books-grid"></div>
+    </section>
+  </main>
+
+  <script src="/js/navbar.js"></script>
+  <script src="/js/backButton.js"></script>
+  <script src="/js/librarianFines.js"></script>
+</body>
+</html>

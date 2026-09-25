@@ -1,32 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BookVerse</title>
+  <title>Home — BookVerse</title>
   <link rel="stylesheet" href="/css/style.css">
 </head>
-<body>
-    <header class="site-header">
-  <nav class="navbar" aria-label="Main navigation">
-    <a class="brand" href="/pages/public/index.html">BookVerse</a>
 
-    <ul class="nav-links">
-      <li>
-        <a href="/pages/public/index.html" aria-current="page">Home</a>
-      </li>
-      <li>
-        <a href="/pages/public/books.html">Browse Books</a>
-      </li>
-      <li>
-       <a href="/pages/public/login.html">Login</a>
-      </li>
-      <li>
-       <a href="/pages/public/register.html">Register</a>
-      </li>
-    </ul>
-  </nav>
-</header>
+<body>
+  <header class="site-header">
+    <nav class="navbar" aria-label="Main navigation">
+      <a class="brand" href="/pages/public/index.html">BookVerse</a>
+
+      <ul class="nav-links">
+        <li><a href="/pages/public/index.html" aria-current="page">Home</a></li>
+        <li><a href="/pages/public/books.html">Browse Books</a></li>
+        <li><a href="/pages/public/login.html">Login</a></li>
+        <li><a href="/pages/public/register.html">Register</a></li>
+      </ul>
+    </nav>
+  </header>
+
   <main class="page-container">
     <section class="welcome-card" aria-labelledby="welcome-title">
       <p class="brand-label">BookVerse</p>
@@ -35,7 +30,26 @@
         Discover books, manage your reading, and connect with your library.
       </p>
     </section>
+
+    <section class="catalogue" aria-labelledby="quotes-title">
+      <h2 id="quotes-title">Words on reading</h2>
+
+      <div class="quote-carousel">
+        <blockquote id="reading-quote" class="reading-quote"></blockquote>
+        <p id="quote-author" class="quote-author"></p>
+      </div>
+    </section>
+    <section class="catalogue">
+      <h2>Explore the library</h2>
+      <p>Find a book that interests you and start reading.</p>
+      <a class="nav-logout home-browse-button" href="/pages/public/books.html">
+        Browse Books
+      </a>
+    </section>
   </main>
+
   <script src="/js/navbar.js"></script>
+  <script src="/js/readingQuotes.js"></script>
 </body>
+
 </html>

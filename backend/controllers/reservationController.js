@@ -134,7 +134,10 @@ const fulfillReservation = async (req, res) => {
     }
 
     const reservation =
-      await reservationService.fulfillReservation(reservationId);
+      await reservationService.fulfillReservation(
+        reservationId,
+        req.session.userId
+      );
 
     res.status(200).json({
       success: true,

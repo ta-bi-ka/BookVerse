@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Books — BookVerse</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <header class="site-header">
+        <nav class="navbar" aria-label="Main navigation">
+            <a class="brand" href="/pages/public/index.html">BookVerse</a>
+
+            <ul class="nav-links">
+                <li><a href="/pages/public/index.html">Home</a></li>
+                <li><a href="/pages/public/books.html">Browse Books</a></li>
+                <li><a href="/pages/public/login.html">Login</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="page-container">
+        <section class="welcome-card">
+            <p class="brand-label">Librarian controls</p>
+            <h1>Manage Books</h1>
+            <p class="description">
+                Add catalogue entries and manage physical copies.
+            </p>
+        </section>
+
+        <p id="manage-books-status" role="status">
+            Checking your account...
+        </p>
+
+        <section id="manage-books-options" class="books-grid" aria-label="Book management options" hidden>
+            <article class="book-card">
+                <h2>Add new book</h2>
+                <p>
+                    Create a title in the catalogue with its ISBN,
+                    publisher, authors, and description.
+                </p>
+                <button type="button" class="nav-logout"
+                    onclick="window.location.assign('/pages/librarian/add-book.html')">
+                    Open Add book
+                </button>
+            </article>
+
+            <article class="book-card">
+                <h2>Add new book copy</h2>
+                <p>
+                    Add a physical copy with its own barcode,
+                    or update an existing copy.
+                </p>
+                <button type="button" class="nav-logout"
+                    onclick="window.location.assign('/pages/librarian/copies.html')">
+                    Open Book copies
+                </button>
+            </article>
+        </section>
+    </main>
+
+    <script src="/js/navbar.js"></script>
+    <script src="/js/manageBooks.js"></script>
+</body>
+
+</html>

@@ -141,7 +141,18 @@ const createReview = async (req, res) => {
         message: "Review text must not exceed 2000 characters",
       });
     }
+    const hasBorrowed = await reviewModel.hasConfirmedBorrow(
+      req.session.userId,
+      bookId
+    );
 
+    if (!hasBorrowed) {
+      return res.status(403).json({
+        success: false,
+        message:
+          "You can review this book only after a librarian approves your borrow request.",
+      });
+    }
     const existingReview =
       await reviewModel.findUserReviewForBook(
         req.session.userId,

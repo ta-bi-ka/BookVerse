@@ -14,6 +14,17 @@ const bookSelectQuery = `
     b.cover_image,
     b.created_on,
     b.last_updated_on,
+        (
+      SELECT COUNT(*)::integer
+      FROM book_copies c
+      WHERE c.book_id = b.book_id
+    ) AS total_copies,
+    (
+      SELECT COUNT(*)::integer
+      FROM book_copies c
+      WHERE c.book_id = b.book_id
+        AND c.status = 'available'
+    ) AS available_copies,
     json_build_object(
       'publisher_id', p.publisher_id,
       'publisher_name', p.publisher_name,
@@ -57,42 +68,42 @@ const bookSelectQuery = `
 `;
 
 const getAllBooks = async () => {
-    const result = await pool.query(`
+  const result = await pool.query(`
     ${bookSelectQuery}
     ORDER BY b.book_id ASC
   `);
 
-    return result.rows;
+  return result.rows;
 };
 
 const getBookById = async (bookId, db = pool) => {
-    const result = await db.query(
-        `
+  const result = await db.query(
+    `
     ${bookSelectQuery}
     WHERE b.book_id = $1
     `,
-        [bookId]
-    );
+    [bookId]
+  );
 
-    return result.rows[0];
+  return result.rows[0];
 };
 
 const createBook = async (
-    client,
-    {
-        publisherId,
-        isbn,
-        title,
-        description,
-        language,
-        edition,
-        publicationYear,
-        totalPages,
-        coverImage,
-    }
+  client,
+  {
+    publisherId,
+    isbn,
+    title,
+    description,
+    language,
+    edition,
+    publicationYear,
+    totalPages,
+    coverImage,
+  }
 ) => {
-    const result = await client.query(
-        `
+  const result = await client.query(
+    `
     INSERT INTO books (
       publisher_id,
       isbn,
@@ -107,39 +118,39 @@ const createBook = async (
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
     RETURNING *
     `,
-        [
-            publisherId,
-            isbn,
-            title,
-            description || null,
-            language || null,
-            edition || null,
-            publicationYear || null,
-            totalPages || null,
-            coverImage || null,
-        ]
-    );
+    [
+      publisherId,
+      isbn,
+      title,
+      description || null,
+      language || null,
+      edition || null,
+      publicationYear || null,
+      totalPages || null,
+      coverImage || null,
+    ]
+  );
 
-    return result.rows[0];
+  return result.rows[0];
 };
 
 const updateBook = async (
-    client,
-    bookId,
-    {
-        publisherId,
-        isbn,
-        title,
-        description,
-        language,
-        edition,
-        publicationYear,
-        totalPages,
-        coverImage,
-    }
+  client,
+  bookId,
+  {
+    publisherId,
+    isbn,
+    title,
+    description,
+    language,
+    edition,
+    publicationYear,
+    totalPages,
+    coverImage,
+  }
 ) => {
-    const result = await client.query(
-        `
+  const result = await client.query(
+    `
     UPDATE books
     SET
       publisher_id = $1,
@@ -155,59 +166,59 @@ const updateBook = async (
     WHERE book_id = $10
     RETURNING *
     `,
-        [
-            publisherId,
-            isbn,
-            title,
-            description || null,
-            language || null,
-            edition || null,
-            publicationYear || null,
-            totalPages || null,
-            coverImage || null,
-            bookId,
-        ]
-    );
+    [
+      publisherId,
+      isbn,
+      title,
+      description || null,
+      language || null,
+      edition || null,
+      publicationYear || null,
+      totalPages || null,
+      coverImage || null,
+      bookId,
+    ]
+  );
 
-    return result.rows[0];
+  return result.rows[0];
 };
 
 const deleteBook = async (client, bookId) => {
-    const result = await client.query(
-        `
+  const result = await client.query(
+    `
     DELETE FROM books
     WHERE book_id = $1
     RETURNING *
     `,
-        [bookId]
-    );
+    [bookId]
+  );
 
-    return result.rows[0];
+  return result.rows[0];
 };
 
 const deleteBookAuthors = async (client, bookId) => {
-    await client.query(
-        `
+  await client.query(
+    `
     DELETE FROM book_authors
     WHERE book_id = $1
     `,
-        [bookId]
-    );
+    [bookId]
+  );
 };
 
 const deleteBookGenres = async (client, bookId) => {
-    await client.query(
-        `
+  await client.query(
+    `
     DELETE FROM book_genres
     WHERE book_id = $1
     `,
-        [bookId]
-    );
+    [bookId]
+  );
 };
 
 const createBookAuthor = async (client, bookId, authorId, authorOrder) => {
-    await client.query(
-        `
+  await client.query(
+    `
     INSERT INTO book_authors (
       book_id,
       author_id,
@@ -215,46 +226,46 @@ const createBookAuthor = async (client, bookId, authorId, authorOrder) => {
     )
     VALUES ($1, $2, $3)
     `,
-        [bookId, authorId, authorOrder]
-    );
+    [bookId, authorId, authorOrder]
+  );
 };
 
 const createBookGenre = async (client, bookId, genreId) => {
-    await client.query(
-        `
+  await client.query(
+    `
     INSERT INTO book_genres (
       book_id,
       genre_id
     )
     VALUES ($1, $2)
     `,
-        [bookId, genreId]
-    );
+    [bookId, genreId]
+  );
 };
 const searchBooks = async ({
-    q,
-    author,
-    genre,
-    publisher,
-    available,
+  q,
+  author,
+  genre,
+  publisher,
+  available,
 }) => {
-    const conditions = [];
-    const values = [];
-    let index = 1;
+  const conditions = [];
+  const values = [];
+  let index = 1;
 
-    if (q) {
-        conditions.push(`
+  if (q) {
+    conditions.push(`
       (
         b.title ILIKE $${index}
         OR b.isbn ILIKE $${index}
       )
     `);
-        values.push(`%${q}%`);
-        index++;
-    }
+    values.push(`%${q}%`);
+    index++;
+  }
 
-    if (author) {
-        conditions.push(`
+  if (author) {
+    conditions.push(`
       EXISTS (
         SELECT 1
         FROM book_authors ba_search
@@ -264,12 +275,12 @@ const searchBooks = async ({
           AND a_search.author_name ILIKE $${index}
       )
     `);
-        values.push(`%${author}%`);
-        index++;
-    }
+    values.push(`%${author}%`);
+    index++;
+  }
 
-    if (genre) {
-        conditions.push(`
+  if (genre) {
+    conditions.push(`
       EXISTS (
         SELECT 1
         FROM book_genres bg_search
@@ -279,20 +290,20 @@ const searchBooks = async ({
           AND g_search.genre_name ILIKE $${index}
       )
     `);
-        values.push(`%${genre}%`);
-        index++;
-    }
+    values.push(`%${genre}%`);
+    index++;
+  }
 
-    if (publisher) {
-        conditions.push(`
+  if (publisher) {
+    conditions.push(`
       p.publisher_name ILIKE $${index}
     `);
-        values.push(`%${publisher}%`);
-        index++;
-    }
+    values.push(`%${publisher}%`);
+    index++;
+  }
 
-    if (available === "true") {
-        conditions.push(`
+  if (available === "true") {
+    conditions.push(`
       EXISTS (
         SELECT 1
         FROM book_copies bc_search
@@ -300,15 +311,15 @@ const searchBooks = async ({
           AND bc_search.status = 'available'
       )
     `);
-    }
+  }
 
-    const whereClause =
-        conditions.length > 0
-            ? `WHERE ${conditions.join(" AND ")}`
-            : "";
+  const whereClause =
+    conditions.length > 0
+      ? `WHERE ${conditions.join(" AND ")}`
+      : "";
 
-    const result = await pool.query(
-        `
+  const result = await pool.query(
+    `
     SELECT
       b.book_id,
       b.publisher_id,
@@ -375,20 +386,20 @@ const searchBooks = async ({
 
     ORDER BY b.title ASC
     `,
-        values
-    );
+    values
+  );
 
-    return result.rows;
+  return result.rows;
 };
 module.exports = {
-    getAllBooks,
-    getBookById,
-    searchBooks,
-    createBook,
-    updateBook,
-    deleteBook,
-    deleteBookAuthors,
-    deleteBookGenres,
-    createBookAuthor,
-    createBookGenre,
+  getAllBooks,
+  getBookById,
+  searchBooks,
+  createBook,
+  updateBook,
+  deleteBook,
+  deleteBookAuthors,
+  deleteBookGenres,
+  createBookAuthor,
+  createBookGenre,
 };

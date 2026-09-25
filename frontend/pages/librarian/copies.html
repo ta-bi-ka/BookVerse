@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Copies — BookVerse</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <header class="site-header">
+        <nav class="navbar" aria-label="Main navigation">
+            <a class="brand" href="/pages/public/index.html">BookVerse</a>
+            <ul class="nav-links">
+                <li><a href="/pages/public/index.html">Home</a></li>
+                <li><a href="/pages/public/books.html">Browse Books</a></li>
+                <li><a href="/pages/public/login.html">Login</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="page-container">
+        <section class="welcome-card">
+            <p class="brand-label">Librarian controls</p>
+            <h1>Manage book copies</h1>
+            <p class="description">
+                Add physical copies and update their condition or shelf location.
+            </p>
+        </section>
+        <button type="button" class="nav-logout librarian-back-button" data-back
+            data-fallback="/pages/librarian/manage-books.html">
+            Back
+        </button>
+
+        <p id="copies-status" role="status">
+            Checking your account...
+        </p>
+
+        <section id="copies-content" hidden>
+            <section class="catalogue" aria-labelledby="add-copy-title">
+                <h2 id="add-copy-title">Add a copy</h2>
+
+                <form id="add-copy-form" class="book-card">
+                    <div class="form-field">
+                        <label for="copy-book">Book</label>
+                        <select id="copy-book" required></select>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="copy-barcode">Unique barcode</label>
+                        <input id="copy-barcode" maxlength="50" required>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="copy-condition">Condition (optional)</label>
+                        <input id="copy-condition" maxlength="20">
+                    </div>
+
+                    <div class="form-field">
+                        <label for="copy-location">Shelf location (optional)</label>
+                        <input id="copy-location" maxlength="30">
+                    </div>
+
+                    <div class="form-field">
+                        <label for="copy-date">Acquisition date (optional)</label>
+                        <input id="copy-date" type="date">
+                    </div>
+
+                    <button id="add-copy-button" type="submit" class="auth-button">
+                        Add copy
+                    </button>
+                </form>
+            </section>
+
+            <section class="catalogue" aria-labelledby="inventory-title">
+                <h2 id="inventory-title">Copy inventory</h2>
+
+                <div class="form-field">
+                    <label for="copy-search">Find a book or barcode</label>
+                    <input id="copy-search" type="search" placeholder="Type a title, ISBN, or barcode">
+                </div>
+
+                <div id="copies-list"></div>
+            </section>
+        </section>
+    </main>
+    <script src="/js/navbar.js"></script>
+    <script src="/js/librarianCopies.js"></script>
+    <script src="/js/backButton.js"></script>
+</body>
+
+</html>

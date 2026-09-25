@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Book — BookVerse</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <header class="site-header">
+        <nav class="navbar" aria-label="Main navigation">
+            <a class="brand" href="/pages/public/index.html">BookVerse</a>
+
+            <ul class="nav-links">
+                <li><a href="/pages/public/index.html">Home</a></li>
+                <li><a href="/pages/public/books.html">Browse Books</a></li>
+                <li><a href="/pages/public/login.html">Login</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="page-container">
+        <section class="welcome-card">
+            <p class="brand-label">Librarian controls</p>
+            <h1>Add a new book</h1>
+            <p class="description">
+                Create a catalogue entry, then add a physical copy.
+            </p>
+        </section>
+
+        <button
+            type="button"
+            class="nav-logout librarian-back-button"
+            data-back
+            data-fallback="/pages/librarian/manage-books.html"
+        >
+            Back
+        </button>
+
+        <p id="add-book-status" role="status">
+            Checking your account...
+        </p>
+
+        <section class="catalogue">
+            <h2>Book information</h2>
+
+            <form id="add-book-form" class="book-card" hidden>
+                <div class="form-field">
+                    <label for="book-title">Title *</label>
+                    <input
+                        id="book-title"
+                        type="text"
+                        maxlength="200"
+                        required
+                    >
+                </div>
+
+                <div class="form-field">
+                    <label for="book-isbn">ISBN *</label>
+                    <input
+                        id="book-isbn"
+                        type="text"
+                        maxlength="20"
+                        required
+                    >
+                </div>
+
+                <div class="form-field">
+                    <label for="book-publisher">Publisher *</label>
+                    <input
+                        id="book-publisher"
+                        type="text"
+                        list="publisher-suggestions"
+                        maxlength="100"
+                        autocomplete="off"
+                        required
+                    >
+                    <datalist id="publisher-suggestions"></datalist>
+                    <small>
+                        Choose a suggested publisher or type a new one.
+                    </small>
+                </div>
+
+                <div class="form-field">
+                    <label for="book-authors">Authors</label>
+                    <input
+                        id="book-authors"
+                        type="text"
+                        list="author-suggestions"
+                        placeholder="Enter author names separated by commas"
+                        autocomplete="off"
+                    >
+                    <datalist id="author-suggestions"></datalist>
+                    <small>
+                        Separate multiple names with commas. New names will
+                        be added when you submit the book.
+                    </small>
+                </div>
+
+                <div class="form-field">
+                    <label for="book-genres">Genres</label>
+                    <input
+                        id="book-genres"
+                        type="text"
+                        list="genre-suggestions"
+                        placeholder="Enter genres separated by commas"
+                        autocomplete="off"
+                    >
+                    <datalist id="genre-suggestions"></datalist>
+                    <small>
+                        Separate multiple genres with commas. New genres will
+                        be added when you submit the book.
+                    </small>
+                </div>
+
+                <div class="form-field">
+                    <label for="book-description">Description</label>
+                    <textarea
+                        id="book-description"
+                        rows="4"
+                        maxlength="20000"
+                    ></textarea>
+                </div>
+
+                <div class="form-field">
+                    <label for="book-language">Language</label>
+                    <input
+                        id="book-language"
+                        type="text"
+                        maxlength="30"
+                    >
+                </div>
+
+                <div class="form-field">
+                    <label for="book-year">Publication year</label>
+                    <input
+                        id="book-year"
+                        type="number"
+                        min="1000"
+                        max="2100"
+                    >
+                </div>
+
+                <div class="form-field">
+                    <label for="book-pages">Total pages</label>
+                    <input
+                        id="book-pages"
+                        type="number"
+                        min="1"
+                    >
+                </div>
+
+                <button
+                    id="save-book"
+                    class="auth-button"
+                    type="submit"
+                >
+                    Add book
+                </button>
+            </form>
+        </section>
+
+        <section
+            id="catalogue-section"
+            class="catalogue"
+            aria-labelledby="catalogue-title"
+            hidden
+        >
+            <h2 id="catalogue-title">Books in the catalogue</h2>
+
+            <div class="form-field">
+                <label for="catalogue-search">Search books</label>
+                <input
+                    id="catalogue-search"
+                    type="search"
+                    placeholder="Title or ISBN"
+                >
+            </div>
+
+            <div id="catalogue-cards" class="books-grid"></div>
+        </section>
+    </main>
+
+    <script src="/js/navbar.js"></script>
+    <script src="/js/addBook.js"></script>
+    <script src="/js/backButton.js"></script>
+</body>
+
+</html>
