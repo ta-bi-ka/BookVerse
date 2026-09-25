@@ -12,13 +12,13 @@ function createBookCard(book) {
 
   const title = document.createElement("h3");
 
-const titleLink = document.createElement("a");
-titleLink.className = "book-title-link";
-titleLink.href =
-  `/pages/public/book-details.html?id=${encodeURIComponent(book.book_id)}`;
-titleLink.textContent = book.title || "Untitled book";
+  const titleLink = document.createElement("a");
+  titleLink.className = "book-title-link";
+  titleLink.href =
+    `/pages/public/book-details.html?id=${encodeURIComponent(book.book_id)}`;
+  titleLink.textContent = book.title || "Untitled book";
 
-title.appendChild(titleLink);
+  title.appendChild(titleLink);
   const authorNames = Array.isArray(book.authors)
     ? book.authors.map((author) => author.author_name).filter(Boolean)
     : [];
@@ -40,6 +40,7 @@ title.appendChild(titleLink);
     `Language: ${book.language || "Not specified"}`;
 
   card.append(title, authors, genres, language);
+  window.addWishlistButton(card, book);
   return card;
 }
 

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Bookshelves — BookVerse</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <nav class="navbar" aria-label="Main navigation">
+      <a class="brand" href="/pages/public/index.html">BookVerse</a>
+
+      <ul class="nav-links">
+        <li><a href="/pages/public/index.html">Home</a></li>
+        <li><a href="/pages/public/books.html">Browse Books</a></li>
+        <li><a href="/pages/user/account.html">My Profile</a></li>
+        <li><a href="/pages/public/login.html">Login</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="page-container">
+    <section class="welcome-card" aria-labelledby="page-title">
+      <p class="brand-label">Your reading collection</p>
+      <h1 id="page-title">My bookshelves</h1>
+      <p class="description">
+        Organise the books you want to read.
+      </p>
+    </section>
+
+    <section class="catalogue" aria-labelledby="shelves-title">
+      <h2 id="shelves-title">Your saved books</h2>
+
+      <p id="shelves-status" role="status">Loading bookshelves...</p>
+
+      <div class="search-controls">
+        <button id="refresh-shelves" type="button">Refresh</button>
+        <a href="/pages/public/books.html">Browse books to add more</a>
+      </div>
+
+      <div id="shelf-controls" hidden>
+        <div class="form-field" style="margin-top: 20px;">
+          <label for="shelf-select">Choose a bookshelf</label>
+          <select
+            id="shelf-select"
+            style="width: 100%; padding: 12px; font: inherit;"
+          ></select>
+        </div>
+
+        <form id="rename-shelf-form" class="book-search">
+          <label for="shelf-name">Bookshelf name</label>
+
+          <div class="search-controls">
+            <input
+              id="shelf-name"
+              type="text"
+              maxlength="100"
+              required
+            >
+            <button type="submit">Save name</button>
+          </div>
+        </form>
+
+        <p id="shelf-book-count"></p>
+        <div id="shelf-books" class="books-grid"></div>
+      </div>
+
+      <noscript>Please enable JavaScript to view your bookshelves.</noscript>
+    </section>
+  </main>
+
+  <script src="/js/navbar.js"></script>
+  <script src="/js/bookshelves.js"></script>
+</body>
+</html>

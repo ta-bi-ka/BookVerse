@@ -40,6 +40,11 @@ function formatProfileDate(value) {
 }
 
 function displayProfile(profile) {
+    const shelvesLink = document.getElementById("my-bookshelves-link");
+
+  if (shelvesLink) {
+    shelvesLink.hidden = profile.role_name !== "Student";
+  }
   const information = document.createElement("dl");
   information.className = "book-information";
 
@@ -169,13 +174,12 @@ profileForm.addEventListener("submit", async (event) => {
     }
 
     displayProfile(result.data);
-saveStatus.textContent = "";
-profileStatus.textContent = "Profile updated successfully.";
-
-editProfileSection.hidden = true;
-editProfileToggle.setAttribute("aria-expanded", "false");
-editProfileToggle.textContent = "Edit profile";
-editProfileToggle.focus();
+    saveStatus.textContent = "";
+    profileStatus.textContent = "Profile updated successfully.";
+    editProfileSection.hidden = true;
+    editProfileToggle.setAttribute("aria-expanded", "false");
+    editProfileToggle.textContent = "Edit profile";
+    editProfileToggle.focus();
   } catch (error) {
     saveStatus.textContent =
       "Could not confirm the update. Refresh to check your saved profile.";
