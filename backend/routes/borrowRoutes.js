@@ -6,6 +6,10 @@ const {
   renewBorrow,
   getMyBorrows,
   getAllBorrows,
+  getMyRequests,
+  getPendingRequests,
+  approveRequest,
+  declineRequest,
 } = require("../controllers/borrowController");
 
 const {
@@ -14,6 +18,31 @@ const {
 } = require("../middleware/authMiddleware");
 
 const router = express.Router();
+router.post(
+  "/requests/:id/approve",
+  requireAuth,
+  requireRole("Librarian"),
+  approveRequest
+);
+
+router.post(
+  "/requests/:id/decline",
+  requireAuth,
+  requireRole("Librarian"),
+  declineRequest
+);
+router.get(
+  "/requests/my",
+  requireAuth,
+  requireRole("Student"),
+  getMyRequests
+);
+router.get(
+  "/requests/pending",
+  requireAuth,
+  requireRole("Librarian"),
+  getPendingRequests
+);
 
 router.post(
   "/",

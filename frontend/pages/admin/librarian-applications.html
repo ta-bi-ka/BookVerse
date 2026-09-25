@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Librarian Applications — BookVerse</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <nav class="navbar" aria-label="Main navigation">
+      <a class="brand" href="/pages/public/index.html">BookVerse</a>
+
+      <ul class="nav-links">
+        <li><a href="/pages/public/index.html">Home</a></li>
+        <li><a href="/pages/public/books.html">Browse Books</a></li>
+        <li><a href="/pages/public/login.html">Login</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="page-container">
+    <section class="welcome-card" aria-labelledby="page-title">
+      <p class="brand-label">Admin controls</p>
+      <h1 id="page-title">Librarian applications</h1>
+      <p class="description">
+        Review applications and approve or decline librarian access.
+      </p>
+    </section>
+
+    <section class="catalogue" aria-labelledby="applications-title">
+      <h2 id="applications-title">Pending applications</h2>
+
+      <p id="applications-status" role="status">
+        Loading applications...
+      </p>
+
+      <button id="refresh-applications" class="nav-logout" type="button">
+        Refresh
+      </button>
+
+      <div
+        id="applications-list"
+        class="books-grid"
+        style="margin-top: 20px;"
+      ></div>
+
+      <noscript>Please enable JavaScript to review applications.</noscript>
+    </section>
+  </main>
+
+  <script src="/js/navbar.js"></script>
+  <script src="/js/librarianApplications.js"></script>
+</body>
+</html>

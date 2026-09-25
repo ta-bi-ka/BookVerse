@@ -65,7 +65,26 @@ const changeUserRole = async (req, res) => {
         message: "You cannot remove your own Admin role",
       });
     }
+    // Admin accounts cannot be changed through this endpoint.
+    if (
+      existingUser.role_name === "Admin" ||
+      role.role_name === "Admin"
+    ) {
+      return res.status(403).json({
+        success: false,
+        message:
+          "Admin accounts are fixed and cannot be assigned or changed here",
+      });
+    }
 
+    // Librarian promotions must use the application approval workflow.
+    if (role.role_name === "Librarian") {
+      return res.status(403).json({
+        success: false,
+        message:
+          "Librarian appointments require an approved application",
+      });
+    }
     await adminModel.updateUserRole(userId, role.role_id);
 
     const updatedUser = await adminModel.getUserById(userId);

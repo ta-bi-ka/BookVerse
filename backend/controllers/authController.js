@@ -3,12 +3,28 @@ const bcrypt = require("bcrypt");
 const {
   findStudentRole,
   findUserByUsernameOrEmail,
-  createUser,
 } = require("../models/authModel");
 
+const {
+  registerAccount,
+} = require("../services/authService");
 const register = async (req, res) => {
   try {
-    const { fullName, username, email, password, phone } = req.body;
+   const {
+  fullName,
+  username,
+  email,
+  password,
+  phone,
+  applyAsLibrarian = false,
+} = req.body || {};
+
+if (typeof applyAsLibrarian !== "boolean") {
+  return res.status(400).json({
+    success: false,
+    message: "applyAsLibrarian must be true or false",
+  });
+}
 
     if (
       typeof fullName !== "string" ||
@@ -52,11 +68,11 @@ const register = async (req, res) => {
     }
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
-      return res.status(400).json({
-        success: false,
-        message: "A valid email address is required",
-      });
-    }
+  return res.status(400).json({
+    success: false,
+    message: "A valid email address is required",
+  });
+}
 
     if (
       phone !== undefined &&
@@ -87,23 +103,29 @@ const register = async (req, res) => {
       });
     }
 
-    const passwordHash = await bcrypt.hash(password, 10);
 
-    const user = await createUser({
-      roleId: studentRole.role_id,
-      fullName: fullName.trim(),
-      username: username.trim(),
-      email: email.trim().toLowerCase(),
-      passwordHash,
-      phone: phone ? phone.trim() : null,
-    });
+   const passwordHash = await bcrypt.hash(password, 10);
 
-    return res.status(201).json({
-      success: true,
-      message: "Registration successful",
-      data: user,
-    });
-  } catch (error) {
+const { user, application } = await registerAccount(
+  {
+    roleId: studentRole.role_id,
+    fullName: fullName.trim(),
+    username: username.trim(),
+    email: email.trim().toLowerCase(),
+    passwordHash,
+    phone: phone ? phone.trim() : null,
+  },
+  applyAsLibrarian
+);
+
+return res.status(201).json({
+  success: true,
+  message: applyAsLibrarian
+    ? "Registration successful. Your librarian application is pending admin approval."
+    : "Registration successful",
+  data: user,
+  librarianApplication: application,
+}); } catch (error) {
     console.error("Registration error:", error);
 
     if (error.code === "23505") {

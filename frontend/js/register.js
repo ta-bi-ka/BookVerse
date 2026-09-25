@@ -51,6 +51,8 @@ registerForm.addEventListener("submit", async (event) => {
         email,
         phone,
         password,
+        applyAsLibrarian:
+          document.getElementById("apply-as-librarian").checked,
       }),
     });
 
@@ -65,8 +67,10 @@ registerForm.addEventListener("submit", async (event) => {
     }
 
     registerForm.reset();
-    registerStatus.textContent =
-      "Account created successfully. Use the Log in link below to sign in.";
+
+    registerStatus.textContent = result.librarianApplication
+      ? "Account created. Your librarian application is pending admin approval. You can log in as a Student while you wait."
+      : "Account created successfully. Use the Log in link below to sign in.";
   } catch (error) {
     registerStatus.textContent =
       "Could not confirm registration. Check your connection. If you retry and the account already exists, try logging in.";

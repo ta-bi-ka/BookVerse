@@ -30,6 +30,32 @@ async function updateAuthNavigation() {
     const result = await response.json();
 
     if (!response.ok || result.success !== true) return;
+    if (result.data.roleName === "Admin") {
+      const applicationsPath = "/pages/admin/librarian-applications.html";
+
+      if (!navigation.querySelector(`a[href="${applicationsPath}"]`)) {
+        const item = document.createElement("li");
+        const link = document.createElement("a");
+
+        link.href = applicationsPath;
+        link.textContent = "Librarian Applications";
+
+        if (window.location.pathname === applicationsPath) {
+          link.setAttribute("aria-current", "page");
+        }
+
+        item.appendChild(link);
+        const loginItem = navigation
+          .querySelector('a[href="/pages/public/login.html"]')
+          ?.closest("li");
+
+        const logoutItem = navigation
+          .querySelector(".nav-logout")
+          ?.closest("li");
+
+        navigation.insertBefore(item, logoutItem || loginItem || null);
+      }
+    }
 
     const loginLink = navigation.querySelector(
       `a[href="${loginPath}"]`
@@ -59,7 +85,32 @@ async function updateAuthNavigation() {
     if (registerItem) {
       registerItem.hidden = true;
     }
+    if (result.data.roleName === "Librarian") {
+  const requestsPath = "/pages/librarian/requests.html";
 
+  if (!navigation.querySelector(`a[href="${requestsPath}"]`)) {
+    const item = document.createElement("li");
+    const link = document.createElement("a");
+
+    link.href = requestsPath;
+    link.textContent = "Borrowing Requests";
+
+    if (window.location.pathname === requestsPath) {
+      link.setAttribute("aria-current", "page");
+    }
+
+    item.appendChild(link);
+
+    const logoutItem = navigation
+      .querySelector(".nav-logout")
+      ?.closest("li");
+
+    navigation.insertBefore(
+      item,
+      logoutItem || loginLink?.closest("li") || null
+    );
+  }
+}
     if (!loginLink) return;
 
     const logoutButton = document.createElement("button");

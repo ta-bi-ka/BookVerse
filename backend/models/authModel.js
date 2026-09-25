@@ -40,8 +40,8 @@ const createUser = async ({
   email,
   passwordHash,
   phone,
-}) => {
-  const result = await pool.query(
+}, client = pool) => {
+  const result = await client.query(
     `INSERT INTO users
       (
         role_id,
@@ -74,9 +74,21 @@ const createUser = async ({
 
   return result.rows[0];
 };
+const createLibrarianApplication = async (userId, client) => {
+  const result = await client.query(
+    `
+    INSERT INTO librarian_applications (user_id)
+    VALUES ($1)
+    RETURNING application_id, status, requested_on
+    `,
+    [userId]
+  );
 
+  return result.rows[0];
+};
 module.exports = {
   findStudentRole,
   findUserByUsernameOrEmail,
   createUser,
+  createLibrarianApplication,
 };
